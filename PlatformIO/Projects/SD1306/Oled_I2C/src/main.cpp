@@ -59,7 +59,7 @@ void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
   I2C_VEML7700.begin(I2C_0_SDA, I2C_0_SCL);  // (I2C_0_SDA, I2C_0_SCL, 100000);
-  I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
+  // I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
    // Check VEML7700 Sensor is ready 
   if (!veml.begin(&I2C_VEML7700)) {
     Serial.println("Sensor not found");
@@ -68,13 +68,13 @@ void setup() {
   Serial.println("Sensor found");
   // Init VEML7700 Sensor
   Init_VEML7700_Sensor(); 
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  /* // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!OLed_display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
     while (1); // Don't proceed, loop forever
   }
   // Serial.println(F("SSD1306 allocation failed"));
-  testdrawstyles();
+  testdrawstyles(); */
 }
 
 void loop() {
