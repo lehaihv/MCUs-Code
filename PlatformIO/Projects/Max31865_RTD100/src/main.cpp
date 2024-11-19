@@ -12,7 +12,7 @@
 double Setpoint, Input, Output;
 
 //Specify the links and initial tuning parameters
-double Kp=10, Ki=0.5, Kd=1; //Kp=2, Ki=5, Kd=1;
+double Kp=2, Ki=0.5, Kd=1.5; //Kp=10, Ki=0.5, Kd=1;  Kp=2, Ki=5, Kd=1;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 //
@@ -34,7 +34,7 @@ void setup() {
   thermo.begin(MAX31865_2WIRE);  // set to 2WIRE or 4WIRE as necessary
    //initialize the variables we're linked to
   Input = thermo.temperature(RNOMINAL, RREF); //analogRead(PIN_INPUT);
-  Setpoint = 45;
+  Setpoint = 105;
   //turn the PID on
   myPID.SetMode(AUTOMATIC);
 }
@@ -82,5 +82,5 @@ void loop() {
   analogWrite(PIN_OUTPUT, Output);
   Serial.println(thermo.temperature(RNOMINAL, RREF));
   //Serial.println();
-  //delay(1000);
+  //delay(5);
 }
