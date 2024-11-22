@@ -75,13 +75,18 @@ void setup() {
   }
   // Serial.println(F("SSD1306 allocation failed"));
   testdrawstyles(); */
+  // Excitation LED control pin initialization
+  pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
+  digitalWrite(4, HIGH);  // sets the digital pin 4 high to turn the emission LED on
+  // delay(500);
+  // digitalWrite(4, LOW);  // sets the digital pin 4 low to turn the emission LED off
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   lux = veml.readLux();  // Measure the fluorescence intensity //VEML_LUX_AUTO
-  Serial.println(lux);
-  delay(1000);
+  Serial.println(lux); //*1000
+  delay(2000);
 }
 
 
