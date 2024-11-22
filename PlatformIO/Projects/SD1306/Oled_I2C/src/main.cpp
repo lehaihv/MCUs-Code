@@ -3,6 +3,21 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+//#include <ESP32TimerInterrupt.h>
+//#include "esp_timer.h"
+
+//esp_timer timer = 0;
+
+// #define PIN_INPUT 0
+//#define PIN_OUTPUT 4
+
+/* unsigned long halfPeriod = 100; // 32 bit data to hold frequency = halfPeriod x 2
+unsigned long currentMillis; // 32 bit value for time comparison
+unsigned long elapsedMillis;  // 32 bit value for time comparison
+unsigned long previousMillis; // 32 bit value for time comparison
+ */
+// Timer0 Configuration Pointer (Handle)
+hw_timer_t *Timer0_Cfg = NULL;
 
 // define pin for I2C module 1 ---> VEML7700_Sensor
 #define I2C_0_SDA 8
@@ -32,8 +47,8 @@ float lux = 0;
 
 // Initialize VEML7700 sensor
 void Init_VEML7700_Sensor() {
-  veml.setGain(VEML7700_GAIN_1);
-  veml.setIntegrationTime(VEML7700_IT_100MS);
+  veml.setGain(VEML7700_GAIN_2);
+  veml.setIntegrationTime(VEML7700_IT_800MS);
 }
 
 void testdrawstyles() {
@@ -54,6 +69,13 @@ void testdrawstyles() {
   OLed_display.display();
   delay(2000);
 }
+
+void IRAM_ATTR Timer0_ISR() { 
+
+        // Your code to execute every 100ms
+        digitalWrite(4, !digitalRead(4));
+
+    }
 
 void setup() {
   // Serial port for debugging purposes
@@ -77,16 +99,39 @@ void setup() {
   testdrawstyles(); */
   // Excitation LED control pin initialization
   pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
-  digitalWrite(4, HIGH);  // sets the digital pin 4 high to turn the emission LED on
+  //digitalWrite(4, HIGH);  // sets the digital pin 4 high to turn the emission LED on
   // delay(500);
-  // digitalWrite(4, LOW);  // sets the digital pin 4 low to turn the emission LED off
+  //digitalWrite(4, LOW);  // sets the digital pin 4 low to turn the emission LED off
+  //analogWrite(PIN_OUTPUT, 10);
+  // Set up timer
+  //timer.attachInterrupt(timerISR, 10, true); // Attach interrupt to timerISR, frequency 10Hz, true for microsecond precision
+  //timerBegin(1, 80, true); // 80 is the compare match register value for 100ms
+  //timerAttachInterrupt(0, timerISR, true); // Attach the ISR
+  // Configure Timer0 Interrupt 10000/second
+  Timer0_Cfg = timerBegin(0, 400, true);
+  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
+  timerAlarmWrite(Timer0_Cfg, 20000, true);
+  timerAlarmEnable(Timer0_Cfg);
 }
 
 void loop() {
+  
+  /* // see if time to change output level
+  currentMillis = millis(); // capture the current 'time'
+  elapsedMillis = currentMillis - previousMillis; // how much 'time' has passed since last capture
+  if (elapsedMillis >= halfPeriod)
+  { // enough has passed: do something
+    previousMillis = previousMillis + halfPeriod; // set up for next level change
+    //PIND = 0b00000100; // flips D2 from Hi to Lo, or Lo to Hi
+    digitalWrite(4, !digitalRead(4));
+  } */
+
   // put your main code here, to run repeatedly:
   lux = veml.readLux();  // Measure the fluorescence intensity //VEML_LUX_AUTO
   Serial.println(lux); //*1000
-  delay(2000);
+  //delay(500);
+  //pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
+   
 }
 
 
