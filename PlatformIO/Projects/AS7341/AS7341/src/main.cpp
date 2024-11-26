@@ -49,19 +49,19 @@ void loop(void)
   //Read the value of sensor data channel 0~5, under eF1F4ClearNIR
   data1 = as7341.readSpectralDataOne();
   
-  Serial.print("F1(405-425nm):");
-  Serial.println(data1.ADF1);
-  Serial.print("F2(435-455nm):");
-  Serial.println(data1.ADF2);
+  //Serial.print("F1(405-425nm):");
+  //Serial.println(data1.ADF1);
+  //Serial.print("F2(435-455nm):");
+  //Serial.println(data1.ADF2);
   Serial.print("F3(470-490nm):");
   Serial.println(data1.ADF3);
-  Serial.print("F4(505-525nm):");   
-  Serial.println(data1.ADF4);
+  //Serial.print("F4(505-525nm):");   
+  //Serial.println(data1.ADF4);
   //Serial.print("Clear:");
   //Serial.println(data1.ADCLEAR);
   //Serial.print("NIR:");
   //Serial.println(data1.ADNIR);
-  as7341.startMeasure(as7341.eF5F8ClearNIR);
+  /*as7341.startMeasure(as7341.eF5F8ClearNIR);
   //Read the value of sensor data channel 0~5, under eF5F8ClearNIR
   data2 = as7341.readSpectralDataTwo();
   Serial.print("F5(545-565nm):");
@@ -75,6 +75,6 @@ void loop(void)
   Serial.print("Clear:");
   Serial.println(data2.ADCLEAR);
   Serial.print("NIR:");
-  Serial.println(data2.ADNIR);
+  Serial.println(data2.ADNIR);*/
   delay(1000);
 }
