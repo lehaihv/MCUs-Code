@@ -47,8 +47,8 @@ float lux = 0;
 
 // Initialize VEML7700 sensor
 void Init_VEML7700_Sensor() {
-  veml.setGain(VEML7700_GAIN_2);
-  veml.setIntegrationTime(VEML7700_IT_800MS);
+  veml.setGain(VEML7700_GAIN_1);
+  veml.setIntegrationTime(VEML7700_IT_100MS);
 }
 
 void testdrawstyles() {
@@ -110,7 +110,7 @@ void setup() {
   // Configure Timer0 Interrupt 10000/second
   Timer0_Cfg = timerBegin(0, 400, true);
   timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
-  timerAlarmWrite(Timer0_Cfg, 20000, true);
+  timerAlarmWrite(Timer0_Cfg, 10000, true);
   timerAlarmEnable(Timer0_Cfg);
 }
 
