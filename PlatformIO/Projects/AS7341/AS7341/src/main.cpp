@@ -34,7 +34,7 @@ void setup(void)
 //  //Set gain value(0~10 corresponds to X0.5,X1,X2,X4,X8,X16,X32,X64,X128,X256,X512)
 //  as7341.setAGAIN(7);
 //  //Enable LED
-//  //as7341.enableLed(true);
+as7341.enableLed(false);
 //  //Set pin current to control brightness (1~20 corresponds to current 4mA,6mA,8mA,10mA,12mA,......,42mA)
 //  //as7341.controlLed(10);
 }
@@ -53,10 +53,10 @@ void loop(void)
   //Serial.println(data1.ADF1);
   //Serial.print("F2(435-455nm):");
   //Serial.println(data1.ADF2);
-  Serial.print("F3(470-490nm):");
-  Serial.println(data1.ADF3);
-  //Serial.print("F4(505-525nm):");   
-  //Serial.println(data1.ADF4);
+  //Serial.print("F3(470-490nm):");
+  //Serial.println(data1.ADF3);
+  Serial.print("F4(505-525nm):");   
+  Serial.println(data1.ADF4);
   //Serial.print("Clear:");
   //Serial.println(data1.ADCLEAR);
   //Serial.print("NIR:");

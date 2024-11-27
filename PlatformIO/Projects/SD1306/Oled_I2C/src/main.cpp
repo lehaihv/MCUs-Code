@@ -47,8 +47,8 @@ float lux = 0;
 
 // Initialize VEML7700 sensor
 void Init_VEML7700_Sensor() {
-  veml.setGain(VEML7700_GAIN_1);
-  veml.setIntegrationTime(VEML7700_IT_100MS);
+  veml.setGain(VEML7700_GAIN_1_8);
+  veml.setIntegrationTime(VEML7700_IT_25MS);
 }
 
 void testdrawstyles() {
