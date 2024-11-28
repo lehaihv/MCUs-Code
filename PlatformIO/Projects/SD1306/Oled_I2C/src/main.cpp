@@ -108,10 +108,10 @@ void setup() {
   //timerBegin(1, 80, true); // 80 is the compare match register value for 100ms
   //timerAttachInterrupt(0, timerISR, true); // Attach the ISR
   // Configure Timer0 Interrupt 10000/second
-  Timer0_Cfg = timerBegin(0, 400, true);
-  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
-  timerAlarmWrite(Timer0_Cfg, 10000, true);
-  timerAlarmEnable(Timer0_Cfg);
+  Timer0_Cfg = timerBegin(0, 400, true);  //0: timer 0 (0-3); 400: prescaler; true/false: counter should count up (true) or down (false) 
+  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);  // attach timer to an ISR
+  timerAlarmWrite(Timer0_Cfg, 10000, true);  // specify the counter value in which the timer interrupt should be generated: 10000 -->100ms if clock is 40MHz/400 = 100kHz
+  timerAlarmEnable(Timer0_Cfg);  // enable timer interrupt
 }
 
 void loop() {
