@@ -75,7 +75,7 @@ void testdrawstyles() {
 void IRAM_ATTR Timer0_ISR() { 
 
         // Your code to execute every 100ms
-        digitalWrite(4, !digitalRead(4));
+        //digitalWrite(4, !digitalRead(4));
 
     }
 
@@ -101,10 +101,10 @@ void setup() {
   testdrawstyles(); */
   // Excitation LED control pin initialization
   pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
-  //digitalWrite(4, HIGH);  // sets the digital pin 4 high to turn the emission LED on
+  // digitalWrite(4, HIGH);  // sets the digital pin 4 high to turn the emission LED on
   // delay(500);
-  //digitalWrite(4, LOW);  // sets the digital pin 4 low to turn the emission LED off
-  //analogWrite(PIN_OUTPUT, 10);
+  // digitalWrite(4, LOW);  // sets the digital pin 4 low to turn the emission LED off
+  // analogWrite(PIN_OUTPUT, 10);
   // Set up timer
   //timer.attachInterrupt(timerISR, 10, true); // Attach interrupt to timerISR, frequency 10Hz, true for microsecond precision
   //timerBegin(1, 80, true); // 80 is the compare match register value for 100ms
@@ -112,7 +112,7 @@ void setup() {
   // Configure Timer0 Interrupt 10000/second
   Timer0_Cfg = timerBegin(0, 2400, true);  //0: timer 0 (0-3); 400: prescaler; true/false: counter should count up (true) or down (false) 
   timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);  // attach timer to an ISR
-  timerAlarmWrite(Timer0_Cfg, 10000, true);  // specify the counter value in which the timer interrupt should be generated: 10000 -->100ms if clock is 40MHz/400 = 100kHz
+  timerAlarmWrite(Timer0_Cfg, 1000, true);  // specify the counter value in which the timer interrupt should be generated: 10000 -->100ms if clock is 40MHz/400 = 100kHz
   timerAlarmEnable(Timer0_Cfg);  // enable timer interrupt
   //read what it thinks it now is
   f = getCpuFrequencyMhz();
@@ -133,9 +133,13 @@ void loop() {
   } */
 
   // put your main code here, to run repeatedly:
+  digitalWrite(4, HIGH);
+  delay(500);
   lux = veml.readLux();  // Measure the fluorescence intensity //VEML_LUX_AUTO
   Serial.println(lux); //*1000
-  //delay(500);
+  
+  digitalWrite(4, LOW);
+  delay(1000);
   //pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
    
 }
