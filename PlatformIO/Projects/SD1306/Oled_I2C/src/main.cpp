@@ -49,8 +49,8 @@ float lux = 0;
 
 // Initialize VEML7700 sensor
 void Init_VEML7700_Sensor() {
-  veml.setGain(VEML7700_GAIN_1);
-  veml.setIntegrationTime(VEML7700_IT_100MS);
+  veml.setGain(VEML7700_GAIN_2);
+  veml.setIntegrationTime(VEML7700_IT_800MS);
 }
 
 void testdrawstyles() {
@@ -138,7 +138,7 @@ void loop() {
   lux = veml.readLux();  // Measure the fluorescence intensity //VEML_LUX_AUTO
   Serial.println(lux); //*1000
   
-  //digitalWrite(4, LOW);
+  digitalWrite(4, LOW);
   delay(1000);
   //pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
    
