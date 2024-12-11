@@ -66,7 +66,8 @@ void testdrawstyles() {
 
   OLed_display.setTextSize(2);             // Draw 2X-scale text
   OLed_display.setTextColor(WHITE);
-  OLed_display.print(F("0x")); OLed_display.println(0xDEADBEEF, HEX);
+  OLed_display.print(F("0x")); 
+  OLed_display.println(0xDEADBEEF, HEX);
 
   OLed_display.display();
   delay(2000);

@@ -285,5 +285,7 @@
   "C_Cpp_Runner.useLeakSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
-  "C_Cpp_Runner.msvcSecureNoWarnings": false
+  "C_Cpp_Runner.msvcSecureNoWarnings": false,
+  "idf.espIdfPath": "/Users/mac7740/esp/v5.1.5/esp-idf",
+  "idf.toolsPath": "/Users/mac7740/.espressif"
 }
