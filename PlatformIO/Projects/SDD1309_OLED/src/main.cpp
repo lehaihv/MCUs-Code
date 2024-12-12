@@ -16,7 +16,8 @@ TwoWire I2C_OLED = TwoWire(1);
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED, -1);
 
-Adafruit_ADS1115 ads;
+Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
+// Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
 
 void setup() {
   Serial.begin(115200);
@@ -74,6 +75,13 @@ void loop() {
 
   delay(1000);
   
+  display.setCursor(0, 20);
+  // Display static text
+  display.println(results);
+  display.setCursor(0, 40);
+  // Display static text
+  display.println(results * multiplier);
+  display.display(); 
 
   // SingleEnded mode
   /* int16_t adc0, adc1, adc2, adc3;
