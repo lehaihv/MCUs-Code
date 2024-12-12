@@ -7,24 +7,31 @@
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
+// define pin for I2C module 1 ---> ADS1115
+#define I2C_0_SDA 8
+#define I2C_0_SCL 9
+
 // define pin for I2C module 2 ---> OLED display
 #define I2C_1_SDA 7
 #define I2C_1_SCL 15
 
+TwoWire I2C_ADS1115 = TwoWire(0);  // "0", "1" instance of I2C module bus
 TwoWire I2C_OLED = TwoWire(1); 
 
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED, -1);
+// Declaration for an SSD1306 display connected to I2C1 (SDA1, SCL1 pins)
+Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED); //, -1);
+// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED, -1);
 
 Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
 // Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
 
 void setup() {
   Serial.begin(115200);
-  
-  // I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
 
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x48)) { // Address 0x3D for 128x64 0x3C
+  I2C_ADS1115.begin(I2C_0_SDA, I2C_0_SCL);
+  I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
+
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x78)) { // Address 0x3D for 128x64 0x3C (0x78/0x79 for SSD1309 Oled)
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
@@ -55,7 +62,7 @@ void setup() {
   // ads.setGain(GAIN_EIGHT);      // 8x gain   +/- 0.512V  1 bit = 0.25mV   0.015625mV
   // ads.setGain(GAIN_SIXTEEN);    // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
 
-  if (!ads.begin()) {
+  if (!ads.begin(0x48, &I2C_ADS1115)) {
     Serial.println("Failed to initialize ADS.");
     while (1);
   }
