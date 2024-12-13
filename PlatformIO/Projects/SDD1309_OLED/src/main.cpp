@@ -79,8 +79,8 @@ void loop() {
   int16_t buff_adc[5];
 
   /* Be sure to update this value based on the IC and the gain settings! */
-  float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
-  //float multiplier = 0.1875F; /* ADS1115  @ +/- 6.144V gain (16-bit results) */
+  //float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
+  float multiplier = 0.1875F; /* ADS1115  @ +/- 6.144V gain (16-bit results) */
 
   results = ads.readADC_Differential_0_1();
 
@@ -91,7 +91,7 @@ void loop() {
     delay(100);
   }
   results_f = getAvg(buff_adc, 5);
-  Serial.printf("%.5f\n", results_f); */
+  Serial.printf("%.2f\n", results_f); */
 
   Serial.print("Differential: "); Serial.print(results); Serial.print("("); Serial.print(results * multiplier); Serial.println("mV)");
 
