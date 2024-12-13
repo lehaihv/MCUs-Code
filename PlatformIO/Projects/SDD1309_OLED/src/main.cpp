@@ -25,11 +25,14 @@ Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OL
 Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
 // Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
 
+// Function
+float getAvg(int16_t arr[], int n);
+
 void setup() {
   Serial.begin(115200);
 
   I2C_ADS1115.begin(I2C_0_SDA, I2C_0_SCL);
-  I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
+  /* I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
 
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x78)) { // Address 0x3D for 128x64 0x3C (0x78/0x79 for SSD1309 Oled)
     Serial.println(F("SSD1306 allocation failed"));
@@ -43,7 +46,7 @@ void setup() {
   display.setCursor(0, 10);
   // Display static text
   display.println("Hello, world!");
-  display.display(); 
+  display.display();  */
 
   //
   Serial.println("Getting differential reading from AIN0 (P) and AIN1 (N)");
@@ -61,7 +64,7 @@ void setup() {
   // ads.setGain(GAIN_FOUR);       // 4x gain   +/- 1.024V  1 bit = 0.5mV    0.03125mV
   // ads.setGain(GAIN_EIGHT);      // 8x gain   +/- 0.512V  1 bit = 0.25mV   0.015625mV
   // ads.setGain(GAIN_SIXTEEN);    // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
-  ads.setDataRate(RATE_ADS1115_64SPS);
+  ads.setDataRate(RATE_ADS1115_860SPS);
 
   if (!ads.begin(0x48, &I2C_ADS1115)) {
     Serial.println("Failed to initialize ADS.");
@@ -72,6 +75,8 @@ void setup() {
 void loop() {
   // Differential mode
   int16_t results;
+  float results_f;
+  int16_t buff_adc[5];
 
   /* Be sure to update this value based on the IC and the gain settings! */
   float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
@@ -79,17 +84,27 @@ void loop() {
 
   results = ads.readADC_Differential_0_1();
 
+  // Average
+  /* for (int i = 0; i < 5; i++)
+  {
+    buff_adc[i] = ads.readADC_Differential_0_1();
+    delay(100);
+  }
+  results_f = getAvg(buff_adc, 5);
+  Serial.printf("%.5f\n", results_f); */
+
   Serial.print("Differential: "); Serial.print(results); Serial.print("("); Serial.print(results * multiplier); Serial.println("mV)");
 
   delay(1000);
+
   
-  display.setCursor(0, 20);
+  /* display.setCursor(20, 10);
   // Display static text
   display.println(results);
-  display.setCursor(0, 40);
+  display.setCursor(40, 10);
   // Display static text
   display.println(results * multiplier);
-  display.display(); 
+  display.display();  */
 
   // SingleEnded mode
   /* int16_t adc0, adc1, adc2, adc3;
@@ -112,4 +127,16 @@ void loop() {
   Serial.print("AIN3: "); Serial.print(adc3); Serial.print("  "); Serial.print(volts3); Serial.println("V");
 
   delay(1000); */
+}
+
+float getAvg(int16_t arr[], int n) {
+    int16_t sum = 0;
+
+    // Find the sum of all elements
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+      
+      // Return the average
+    return (float)sum / n;
 }
