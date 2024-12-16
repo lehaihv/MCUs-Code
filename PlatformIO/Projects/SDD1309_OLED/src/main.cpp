@@ -30,7 +30,8 @@ float getAvg(int16_t arr[], int n);
 
 void setup() {
   Serial.begin(115200);
-
+  pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
+  digitalWrite(4, LOW);
   I2C_ADS1115.begin(I2C_0_SDA, I2C_0_SCL);
   /* I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
 
@@ -77,11 +78,13 @@ void loop() {
   int16_t results;
   float results_f;
   int16_t buff_adc[5];
-
+  // digitalWrite(4, HIGH);
+  //delay(1000);
   /* Be sure to update this value based on the IC and the gain settings! */
   //float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
   float multiplier = 0.1875F; /* ADS1115  @ +/- 6.144V gain (16-bit results) */
-
+  digitalWrite(4, HIGH);
+  delay(1000);
   results = ads.readADC_Differential_0_1();
 
   // Average
@@ -94,7 +97,8 @@ void loop() {
   Serial.printf("%.2f\n", results_f); */
 
   Serial.print("Differential: "); Serial.print(results); Serial.print("("); Serial.print(results * multiplier); Serial.println("mV)");
-
+  // digitalWrite(4, !digitalRead(4));
+  digitalWrite(4, LOW);
   delay(1000);
 
   
