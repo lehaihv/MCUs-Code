@@ -103,9 +103,9 @@ void loop() {
 
   display.clearDisplay();
   display.setCursor(0, 20);
-  display.println("Differential: "); 
+  display.println("Values");  // "Differential: "); 
   display.println();
-  display.print(results); display.print("("); display.print(results * multiplier); display.println("mV)");
+  display.print(results); //display.print("("); display.print(results * multiplier); display.println("mV)");
   // Display static text
   /*display.println(results);
   display.setCursor(0, 40);

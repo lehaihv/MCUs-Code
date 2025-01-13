@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"path": "Projects/TSL2591"
+		},
+		{
+			"path": "Projects/STM32"
+		},
+		{
+			"path": "Projects/SDD1309_OLED"
+		},
+		{
+			"path": "Projects/CPU_Clock"
+		},
+		{
+			"path": "Projects/AS7341"
+		},
+		{
+			"path": "Projects/Think_Speak"
+		},
+		{
+			"path": "Projects/TEC Module"
+		},
+		{
+			"path": "Projects/Syringe Pump"
+		},
+		{
+			"path": "Projects/SD1306"
+		},
+		{
+			"path": "Projects/Max31865_RTD100"
+		},
+		{
+			"path": "Projects/LVGL"
+		},
+		{
+			"path": "Projects/I2C_Scanner"
+		}
+	]
+}
