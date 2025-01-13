@@ -25,6 +25,8 @@ Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OL
 Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
 // Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
 
+double Setpoint, Input, Output;
+
 // Function
 float getAvg(int16_t arr[], int n);
 
@@ -83,8 +85,10 @@ void loop() {
   /* Be sure to update this value based on the IC and the gain settings! */
   //float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
   float multiplier = 0.1875F; /* ADS1115  @ +/- 6.144V gain (16-bit results) *///0.015625F;// 0.03125F; // 
-  digitalWrite(4, HIGH);
-  delay(1000);
+  // digitalWrite(4, HIGH);
+  Output = 80;
+  analogWrite(4, Output);
+  delay(500);
   results = ads.readADC_Differential_0_1(); 
  
   // Average
@@ -98,8 +102,9 @@ void loop() {
 
   Serial.print("Differential: "); Serial.print(results); Serial.print("("); Serial.print(results * multiplier); Serial.println("mV)");
   // digitalWrite(4, !digitalRead(4));
-  digitalWrite(4, LOW);
-  //delay(1000); 
+  //digitalWrite(4, LOW);
+  analogWrite(4, 0);
+  delay(1000); 
 
   display.clearDisplay();
   display.setCursor(0, 20);
