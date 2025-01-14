@@ -86,7 +86,9 @@ void loop() {
   //float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
   float multiplier = 0.1875F; /* ADS1115  @ +/- 6.144V gain (16-bit results) *///0.015625F;// 0.03125F; // 
   // digitalWrite(4, HIGH);
-  Output = 80;
+  Output = 125;  //map(analogRead(16), 0, 4095, 0, 255);  // 80;
+  analogReadResolution(16);
+  Serial.println(analogRead(16));
   analogWrite(4, Output);
   delay(500);
   results = ads.readADC_Differential_0_1(); 
