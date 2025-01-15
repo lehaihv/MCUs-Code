@@ -190,11 +190,11 @@ void advancedRead(void)
   uint16_t ir, full;
   ir = lum >> 16;
   full = lum & 0xFFFF;
-  global_lux = full;
-  Serial.print(F("[ ")); Serial.print(millis()); Serial.print(F(" ms ] "));
-  Serial.print(F("IR: ")); Serial.print(ir);  Serial.print(F("  "));
-  Serial.print(F("Full: ")); Serial.print(full); Serial.print(F("  "));
-  Serial.print(F("Visible: ")); Serial.print(full - ir); Serial.print(F("  "));
+  global_lux = tsl.calculateLux(full, ir);  // full - ir; // visible
+  //Serial.print(F("[ ")); Serial.print(millis()); Serial.print(F(" ms ] "));
+  //Serial.print(F("IR: ")); Serial.print(ir);  Serial.print(F("  "));
+  //Serial.print(F("Full: ")); Serial.print(full); Serial.print(F("  "));
+  //Serial.print(F("Visible: ")); Serial.print(full - ir); Serial.print(F("  "));
   Serial.print(F("Lux: ")); Serial.println(tsl.calculateLux(full, ir), 6);
 }
 
@@ -235,7 +235,9 @@ void unifiedSensorAPIRead(void)
 /**************************************************************************/
 void loop(void) 
 { 
-  digitalWrite(4, HIGH);
+  //digitalWrite(4, HIGH);
+  analogWrite(17, 30);
+  analogWrite(4, 10);
   delay(1000);
   //simpleRead(); 
   advancedRead();
@@ -245,7 +247,9 @@ void loop(void)
   display.println("Differential: "); 
   display.println();
   display.print(global_lux); //display.print("("); display.print(results * multiplier); display.println("mV)");
-  digitalWrite(4, LOW);
+  //digitalWrite(4, LOW);
+  analogWrite(4, 0);
+  analogWrite(17, 0);
   display.display(); 
   delay(500);
 }
