@@ -37,7 +37,7 @@ Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OL
 
 Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591); // pass in a number for the sensor identifier (for your use later)
 
-uint16_t global_lux;
+float global_lux;
 /**************************************************************************/
 /*
     Displays some basic information on this sensor from the unified
@@ -68,18 +68,19 @@ void displaySensorDetails(void)
 void configureSensor(void)
 {
   // You can change the gain on the fly, to adapt to brighter/dimmer light situations
-  //tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
-  tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
-  //tsl.setGain(TSL2591_GAIN_HIGH);   // 428x gain
+  // tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
+  //tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
+  // tsl.setGain(TSL2591_GAIN_HIGH);   // 428x gain
+   tsl.setGain(TSL2591_GAIN_MAX);    // max gain (9876x)
   
   // Changing the integration time gives you a longer time over which to sense light
   // longer timelines are slower, but are good in very low light situtations!
   //tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_200MS);
-  tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
+  // tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_400MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_500MS);
-  // tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
+   tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
 
   /* Display the gain and integration time for reference sake */  
   Serial.println(F("------------------------------------"));
@@ -116,8 +117,8 @@ void configureSensor(void)
 void setup(void) 
 {
   Serial.begin(115200);
-  pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
-  digitalWrite(4, LOW);
+  //pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
+  //digitalWrite(4, LOW);
   I2C_TSL2591.begin(I2C_0_SDA, I2C_0_SCL); 
   I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
   // Oled initial
@@ -153,7 +154,7 @@ void setup(void)
   
   /* Configure the sensor */
   configureSensor();
-
+  //analogWrite(17, 200);
   // Now we're ready to get readings ... move on to loop()!
 }
 
@@ -236,20 +237,22 @@ void unifiedSensorAPIRead(void)
 void loop(void) 
 { 
   //digitalWrite(4, HIGH);
-  analogWrite(17, 30);
-  analogWrite(4, 10);
-  delay(1000);
+  //analogWrite(17, 100);
+  analogWrite(4, 100);
+  delay(2000);
   //simpleRead(); 
   advancedRead();
+  delay(200);
+  //analogWrite(17, 0);
   // unifiedSensorAPIRead();
   display.clearDisplay();
   display.setCursor(0, 20);
   display.println("Differential: "); 
   display.println();
-  display.print(global_lux); //display.print("("); display.print(results * multiplier); display.println("mV)");
+  display.print(global_lux*1000); //display.print("("); display.print(results * multiplier); display.println("mV)");
   //digitalWrite(4, LOW);
   analogWrite(4, 0);
-  analogWrite(17, 0);
+  //analogWrite(17, 0);
   display.display(); 
-  delay(500);
+  delay(1000);
 }
