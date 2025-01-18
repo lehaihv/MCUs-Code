@@ -10,6 +10,13 @@
 #include <Adafruit_Sensor.h>
 #include "Adafruit_TSL2591.h"
 
+/* #define LED_GPIO   5
+#define PWM1_Ch    0
+#define PWM1_Res   8
+#define PWM1_Freq  1000
+ 
+int PWM1_DutyCycle = 0; */
+
 // Example for demonstrating the TSL2591 library - public domain!
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -156,6 +163,12 @@ void setup(void)
   configureSensor();
   //analogWrite(17, 200);
   // Now we're ready to get readings ... move on to loop()!
+
+  /* ledcAttachPin(LED_GPIO, PWM1_Ch);
+  ledcSetup(PWM1_Ch, PWM1_Freq, PWM1_Res); */
+
+  analogWriteFrequency(1000);
+  analogWriteResolution(12);
 }
 
 /**************************************************************************/
@@ -238,7 +251,8 @@ void loop(void)
 { 
   //digitalWrite(4, HIGH);
   //analogWrite(17, 100);
-  analogWrite(4, 100);
+  // analogWriteFrequency(1000);
+  analogWrite(4, 200);  // 0 to 1023: 200 400 600 800 1000
   delay(2000);
   //simpleRead(); 
   advancedRead();
