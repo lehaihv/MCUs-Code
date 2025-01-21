@@ -170,16 +170,16 @@ void setup(void)
 
   // analogWriteFrequency(5000);
   //analogWriteResolution(12);
-  analogWrite(4, 50);  // 0 to 1023: 200 400 600 800 1000
+  /* analogWrite(4, 50);  // 0 to 1023: 200 400 600 800 1000
   analogWrite(6, 100);
   analogWrite(12, 150);
   analogWrite(13, 200);
-  analogWrite(14, 250);
+  analogWrite(14, 250); */
   
-  ledcAttachPin(14, 1);
+  /* ledcAttachPin(14, 1);
   ledcSetup(1, 50, 12);
   Serial.print("Freq: ");
-  Serial.println(ledcReadFreq(1));
+  Serial.println(ledcReadFreq(1)); */
 
 }
 
@@ -270,10 +270,20 @@ void loop(void)
   analogWrite(12, 600);
   analogWrite(13, 800);
   analogWrite(14, 1000); */
-  delay(2000);
+  analogWrite(4, 50);  // 0 to 255: 50 100 150 200 250
+  analogWrite(6, 100);
+  analogWrite(12, 150);
+  analogWrite(13, 200);
+  analogWrite(14, 250);
+  delay(1000);
   //simpleRead(); 
   advancedRead();
-  delay(200);
+  delay(100);
+  analogWrite(4, 0);
+  analogWrite(6, 0);
+  analogWrite(12, 0);
+  analogWrite(13, 0);
+  analogWrite(14, 0);
   //analogWrite(17, 0);
   // unifiedSensorAPIRead();
   display.clearDisplay();
@@ -282,12 +292,7 @@ void loop(void)
   display.println();
   display.print(global_lux*1000); //display.print("("); display.print(results * multiplier); display.println("mV)");
   //digitalWrite(4, LOW);
-  /* analogWrite(4, 0);
-  analogWrite(6, 0);
-  analogWrite(12, 0);
-  analogWrite(13, 0);
-  analogWrite(14, 0); */
   //analogWrite(17, 0);
   display.display(); 
-  delay(2000);
+  delay(5000);
 }
