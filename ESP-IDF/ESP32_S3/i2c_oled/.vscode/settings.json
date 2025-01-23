@@ -1,0 +1,9 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.espIdfPath": "/Users/macbookpro5530/esp/v5.1.5/esp-idf",
+    "idf.toolsPath": "/Users/macbookpro5530/.espressif",
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ],
+    "idf.flashType": "UART"
+}
