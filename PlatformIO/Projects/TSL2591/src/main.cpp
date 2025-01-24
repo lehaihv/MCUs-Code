@@ -124,7 +124,8 @@ void configureSensor(void)
 void setup(void) 
 {
   Serial.begin(115200);
-  //pinMode(4, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
+  //pinMode(6, OUTPUT);     // sets the digital pin 4 as output to control emission LED 
+  //pinMode(14, OUTPUT);
   //digitalWrite(4, LOW);
   I2C_TSL2591.begin(I2C_0_SDA, I2C_0_SCL); 
   I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
@@ -221,7 +222,7 @@ void advancedRead(void)
   //Serial.print(F("IR: ")); Serial.print(ir);  Serial.print(F("  "));
   //Serial.print(F("Full: ")); Serial.print(full); Serial.print(F("  "));
   //Serial.print(F("Visible: ")); Serial.print(full - ir); Serial.print(F("  "));
-  Serial.print(F("Lux: ")); Serial.println(tsl.calculateLux(full, ir), 6);
+  Serial.print(F("Lux: ")); Serial.println(global_lux*1000);  // println(tsl.calculateLux(full, ir), 6);
 }
 
 /**************************************************************************/
@@ -271,14 +272,18 @@ void loop(void)
   analogWrite(13, 800);
   analogWrite(14, 1000); */
   //analogWrite(4, 50);  // 0 to 255: 50 100 150 200 250
-  analogWrite(6, 250); // 100
+  analogWrite(6, 100); // 100
   //analogWrite(12, 150);
   //analogWrite(13, 200);
-  analogWrite(14, 250);
-  delay(1000);
+  analogWrite(14, 100);
+  //digitalWrite(6, HIGH);
+  //digitalWrite(14, HIGH);
+  delay(500);
   //simpleRead(); 
   advancedRead();
   delay(100);
+  //digitalWrite(6, LOW);
+  //digitalWrite(14, LOW);
   //analogWrite(4, 0);
   analogWrite(6, 0);
   //analogWrite(12, 0);
@@ -294,5 +299,5 @@ void loop(void)
   //digitalWrite(4, LOW);
   //analogWrite(17, 0);
   display.display(); 
-  delay(10000);
+  delay(7000);
 }
