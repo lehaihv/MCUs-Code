@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/CMakeFiles/bootloader
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/CMakeFiles/bootloader.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/CMakeFiles/bootloader-complete.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/Users/macbookpro5530/Documents/GitHub/MCUs Code/ESP-IDF/ESP32_S3/hello_world/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
