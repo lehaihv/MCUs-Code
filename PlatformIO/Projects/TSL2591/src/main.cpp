@@ -76,18 +76,18 @@ void configureSensor(void)
 {
   // You can change the gain on the fly, to adapt to brighter/dimmer light situations
   // tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
-  //tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
+   tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
   // tsl.setGain(TSL2591_GAIN_HIGH);   // 428x gain
-   tsl.setGain(TSL2591_GAIN_MAX);    // max gain (9876x)
+  // tsl.setGain(TSL2591_GAIN_MAX);    // max gain (9876x)
   
   // Changing the integration time gives you a longer time over which to sense light
   // longer timelines are slower, but are good in very low light situtations!
-  //tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
+   tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_200MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_400MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_500MS);
-   tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
+  // tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
 
   /* Display the gain and integration time for reference sake */  
   Serial.println(F("------------------------------------"));
@@ -270,19 +270,19 @@ void loop(void)
   analogWrite(12, 600);
   analogWrite(13, 800);
   analogWrite(14, 1000); */
-  analogWrite(4, 50);  // 0 to 255: 50 100 150 200 250
-  analogWrite(6, 100);
-  analogWrite(12, 150);
-  analogWrite(13, 200);
+  //analogWrite(4, 50);  // 0 to 255: 50 100 150 200 250
+  analogWrite(6, 250); // 100
+  //analogWrite(12, 150);
+  //analogWrite(13, 200);
   analogWrite(14, 250);
   delay(1000);
   //simpleRead(); 
   advancedRead();
   delay(100);
-  analogWrite(4, 0);
+  //analogWrite(4, 0);
   analogWrite(6, 0);
-  analogWrite(12, 0);
-  analogWrite(13, 0);
+  //analogWrite(12, 0);
+  //analogWrite(13, 0);
   analogWrite(14, 0);
   //analogWrite(17, 0);
   // unifiedSensorAPIRead();
@@ -294,5 +294,5 @@ void loop(void)
   //digitalWrite(4, LOW);
   //analogWrite(17, 0);
   display.display(); 
-  delay(5000);
+  delay(10000);
 }
