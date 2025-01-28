@@ -1,0 +1,12 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.espIdfPathWin": "C:\\Users\\haihv\\esp\\v5.4\\esp-idf",
+    "idf.toolsPathWin": "C:\\Users\\haihv\\.espressif",
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ],
+    "files.associations": {
+        "esp_lvgl_port.h": "c",
+        "lvgl.h": "c"
+    }
+}
