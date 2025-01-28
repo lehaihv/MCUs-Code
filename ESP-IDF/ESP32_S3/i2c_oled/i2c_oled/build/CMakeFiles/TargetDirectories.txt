@@ -863,3 +863,10 @@ D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/main/CMakeF
 D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/main/CMakeFiles/install.dir
 D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/main/CMakeFiles/install/local.dir
 D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/main/CMakeFiles/install/strip.dir
+D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/bmp280_i2c/CMakeFiles/__idf_bmp280_i2c.dir
+D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/bmp280_i2c/CMakeFiles/edit_cache.dir
+D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/bmp280_i2c/CMakeFiles/rebuild_cache.dir
+D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/bmp280_i2c/CMakeFiles/list_install_components.dir
+D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/bmp280_i2c/CMakeFiles/install.dir
+D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/bmp280_i2c/CMakeFiles/install/local.dir
+D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/i2c_oled/i2c_oled/build/esp-idf/bmp280_i2c/CMakeFiles/install/strip.dir
