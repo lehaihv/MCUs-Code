@@ -8,5 +8,7 @@
         "vector": "cpp",
         "string_view": "cpp",
         "initializer_list": "cpp"
-    }
+    },
+    "idf.espIdfPath": "/Users/mac7740/esp/v5.3.1/esp-idf",
+    "idf.toolsPath": "/Users/mac7740/.espressif"
 }
