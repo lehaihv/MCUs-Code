@@ -33,6 +33,7 @@
 
 //Hardware Specific Components
 #include "driver/i2c.h"
+//#include "driver/i2c_master.h"
 
 //I2C User Defines
 #define I2C_MASTER_SCL_IO           9//CONFIG_I2C_MASTER_SCL      /*!< GPIO number used for I2C master clock */
@@ -51,7 +52,7 @@ int16_t bmp280_i2c_hal_init()
 
     int i2c_master_port = I2C_MASTER_NUM;
 
-    i2c_config_t conf = {
+    i2c_config_t conf = {                 // i2c_master_bus_config_t
         .mode = I2C_MODE_MASTER,
         .sda_io_num = I2C_MASTER_SDA_IO,
         .scl_io_num = I2C_MASTER_SCL_IO,
