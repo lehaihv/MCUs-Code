@@ -33,9 +33,9 @@ static const char *TAG = "example";
 //////////////////// Please update the following configuration according to your LCD spec //////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXAMPLE_LCD_PIXEL_CLOCK_HZ    (400 * 1000)
-#define EXAMPLE_PIN_NUM_SDA           4//7//3
-#define EXAMPLE_PIN_NUM_SCL           5//15//4
-#define EXAMPLE_PIN_NUM_RST           -1
+#define EXAMPLE_PIN_NUM_SDA           7//4//7//3
+#define EXAMPLE_PIN_NUM_SCL           15//5//15//4
+#define EXAMPLE_PIN_NUM_RST           5//-1
 #define EXAMPLE_I2C_HW_ADDR           0x3C
 
 // The pixel number in horizontal and vertical
@@ -132,7 +132,7 @@ void app_main(void)
     lv_disp_t *disp = lvgl_port_add_disp(&disp_cfg);
 
     /* Rotation of the screen */
-    lv_disp_set_rotation(disp, LV_DISP_ROT_NONE);
+    lv_disp_set_rotation(disp, LV_DISP_ROT_180);
 
     ESP_LOGI(TAG, "Display LVGL Scroll Text");
     // Lock the mutex due to the LVGL APIs are not thread-safe
