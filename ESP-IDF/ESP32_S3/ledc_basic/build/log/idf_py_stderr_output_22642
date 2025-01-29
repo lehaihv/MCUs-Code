@@ -1,0 +1,12 @@
+CMake Error at /Users/mac7740/esp/v5.4/esp-idf/tools/cmake/project.cmake:564 (__project):
+  Running
+
+   '/Users/mac7740/.espressif/tools/ninja/1.12.1/ninja' '--version'
+
+  failed with:
+
+   permission denied
+Call Stack (most recent call first):
+  CMakeLists.txt:6 (project)
+
+

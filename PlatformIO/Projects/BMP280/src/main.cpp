@@ -6,6 +6,14 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
 
+#include <Fonts/FreeMono9pt7b.h>
+#include <Fonts/Tiny3x3a2pt7b.h>
+#include <Fonts/Picopixel.h>
+#include <Fonts/TomThumb.h>
+#include <Fonts/Org_01.h>
+#include <Fonts/FreeSerifBold6pt7b.h>
+#include <Fonts/FreeSerifBold4pt7b.h>
+
 #define BMP_SCK  (13)
 #define BMP_MISO (12)
 #define BMP_MOSI (11)
@@ -94,12 +102,18 @@ void loop() {
 
     /////
     display.clearDisplay();
-    display.setCursor(40, 0);
+    //display.setTextSize(2);
+    // display.setFont(&FreeSerifBold4pt7b);//TomThumb);//Picopixel);//Tiny3x3a2pt7b); //FreeMono9pt7b);
+    display.setCursor(40, 10);
     display.println("BMP280"); 
     //display.println();
-    display.setCursor(0, 15); display.print(F("Temp: "));display.print(bmp.readTemperature());display.println(" *C");
-    display.setCursor(0, 30); display.print(F("Pres: "));display.print(bmp.readPressure());display.println(" Pa");
-    display.setCursor(0, 45); display.print(F("Alti: "));display.print(bmp.readAltitude(1013.25));display.println(" m");
+    display.setCursor(0, 20); display.print(F("Temp: "));display.print(bmp.readTemperature());display.println(" *C");
+    display.setCursor(0, 35); display.print(F("Pres: "));display.print(bmp.readPressure());display.println(" Pa");
+    display.setCursor(0, 50); display.print(F("Alti: "));display.print(bmp.readAltitude(1013.25));display.println(" m");
+    
     display.display();
+
+    //
+    
     delay(2000);
 }

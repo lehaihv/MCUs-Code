@@ -4,5 +4,7 @@
     "idf.toolsPathWin": "C:\\Users\\haihv\\.espressif",
     "idf.openOcdConfigs": [
         "board/esp32s3-builtin.cfg"
-    ]
+    ],
+    "idf.espIdfPath": "/Users/mac7740/esp/v5.4/esp-idf",
+    "idf.toolsPath": "/Users/mac7740/.espressif"
 }

@@ -266,16 +266,16 @@ void loop(void)
   //analogWrite(17, 100);
   //analogWriteFrequency(5000);
   //analogWriteResolution(12);
-  /* analogWrite(4, 200);  // 0 to 1023: 200 400 600 800 1000
-  analogWrite(6, 400);
-  analogWrite(12, 600);
-  analogWrite(13, 800);
-  analogWrite(14, 1000); */
+  analogWrite(4, 50);  // 0 to 1023: 200 400 600 800 1000
+  analogWrite(6, 100);
+  analogWrite(12, 150);
+  analogWrite(13, 200);
+  analogWrite(14, 250);
   //analogWrite(4, 50);  // 0 to 255: 50 100 150 200 250
   //analogWrite(6, 100); // 100
   //analogWrite(12, 150);
   //analogWrite(13, 200);
-  analogWrite(14, 250);
+  //analogWrite(14, 250);
   //digitalWrite(6, HIGH);
   //digitalWrite(14, HIGH);
   delay(500);
@@ -288,7 +288,7 @@ void loop(void)
   //analogWrite(6, 0);
   //analogWrite(12, 0);
   //analogWrite(13, 0);
-  analogWrite(14, 0);
+  //analogWrite(14, 0);
   //analogWrite(17, 0);
   // unifiedSensorAPIRead();
   display.clearDisplay();
