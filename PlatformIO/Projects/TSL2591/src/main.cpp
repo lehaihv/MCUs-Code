@@ -144,7 +144,7 @@ void setup(void)
   display.println("Hello, world!");
   display.display();  
 
-  /* // TSL2591 initial
+  // TSL2591 initial
   Serial.println(F("Starting Adafruit TSL2591 Test!"));
   
   if (tsl.begin(&I2C_TSL2591, 0x29)) 
@@ -158,10 +158,10 @@ void setup(void)
   }
     
   /* Display some basic information on this sensor */
-  //displaySensorDetails();
+  displaySensorDetails();
   
   /* Configure the sensor */
-  /*configureSensor(); */
+  configureSensor();
   //analogWrite(17, 200);
   // Now we're ready to get readings ... move on to loop()!
 
@@ -280,15 +280,15 @@ void loop(void)
   //digitalWrite(14, HIGH);
   delay(500);
   //simpleRead(); 
-  //advancedRead();
+  advancedRead();
   delay(100);
   //digitalWrite(6, LOW);
   //digitalWrite(14, LOW);
-  //analogWrite(4, 0);
-  //analogWrite(6, 0);
-  //analogWrite(12, 0);
-  //analogWrite(13, 0);
-  //analogWrite(14, 0);
+  analogWrite(4, 0);
+  analogWrite(6, 0);
+  analogWrite(12, 0);
+  analogWrite(13, 0);
+  analogWrite(14, 0);
   //analogWrite(17, 0);
   // unifiedSensorAPIRead();
   display.clearDisplay();
@@ -299,5 +299,5 @@ void loop(void)
   //digitalWrite(4, LOW);
   //analogWrite(17, 0);
   display.display(); 
-  delay(7000);
+  delay(5000);
 }
