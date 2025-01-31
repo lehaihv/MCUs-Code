@@ -1,6 +1,6 @@
 {
     "C_Cpp.intelliSenseEngine": "default",
-    "idf.espIdfPath": "/Users/macbookpro5530/esp/v5.1.5/esp-idf",
+    "idf.espIdfPath": "/Users/macbookpro5530/esp/v5.4/esp-idf",
     "idf.openOcdConfigs": [
         "board/esp32s3-builtin.cfg"
     ],
