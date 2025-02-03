@@ -278,7 +278,7 @@ void loop(void)
   //analogWrite(14, 250);
   //digitalWrite(6, HIGH);
   //digitalWrite(14, HIGH);
-  delay(500);
+  delay(1500);
   //simpleRead(); 
   advancedRead();
   delay(100);
