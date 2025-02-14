@@ -61,8 +61,8 @@ void setup() {
   // Setting these values incorrectly may destroy your ADC!
   //                                                                ADS1015  ADS1115
   //                                                                -------  -------
-  ads.setGain(GAIN_TWOTHIRDS);  // 2/3x gain +/- 6.144V  1 bit = 3mV      0.1875mV (default)
-  // ads.setGain(GAIN_ONE);        // 1x gain   +/- 4.096V  1 bit = 2mV      0.125mV
+  //ads.setGain(GAIN_TWOTHIRDS);  // 2/3x gain +/- 6.144V  1 bit = 3mV      0.1875mV (default)
+  ads.setGain(GAIN_ONE);        // 1x gain   +/- 4.096V  1 bit = 2mV      0.125mV
   // ads.setGain(GAIN_TWO);        // 2x gain   +/- 2.048V  1 bit = 1mV      0.0625mV
   //ads.setGain(GAIN_FOUR);       // 4x gain   +/- 1.024V  1 bit = 0.5mV    0.03125mV
   // ads.setGain(GAIN_EIGHT);      // 8x gain   +/- 0.512V  1 bit = 0.25mV   0.015625mV
@@ -84,12 +84,12 @@ void loop() {
   delay(1000); */
   /* Be sure to update this value based on the IC and the gain settings! */
   //float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
-  float multiplier = 0.1875F; /* ADS1115  @ +/- 6.144V gain (16-bit results) *///0.015625F;// 0.03125F; // 
+  float multiplier = 0.125F; /* ADS1115  @ +/- 6.144V gain (16-bit results) *///0.015625F;// 0.03125F; // 
   // digitalWrite(4, HIGH);
-  Output = 125;  //map(analogRead(16), 0, 4095, 0, 255);  // 80;
-  analogReadResolution(16);
-  Serial.println(analogRead(16));
-  analogWrite(4, Output);
+  Output = 100;  //map(analogRead(16), 0, 4095, 0, 255);  // 80;
+  //analogReadResolution(16);
+  //Serial.println(analogRead(16));
+  analogWrite(14, Output);
   delay(500);
   results = ads.readADC_Differential_0_1(); 
  
@@ -105,14 +105,14 @@ void loop() {
   Serial.print("Differential: "); Serial.print(results); Serial.print("("); Serial.print(results * multiplier); Serial.println("mV)");
   // digitalWrite(4, !digitalRead(4));
   //digitalWrite(4, LOW);
-  analogWrite(4, 0);
+  analogWrite(14, 0);
   delay(1000); 
 
   display.clearDisplay();
   display.setCursor(0, 20);
   display.println("Values");  // "Differential: "); 
   display.println();
-  display.print(results); //display.print("("); display.print(results * multiplier); display.println("mV)");
+  display.print(results); display.print("("); display.print(results * multiplier); display.println("mV)");
   // Display static text
   /*display.println(results);
   display.setCursor(0, 40);

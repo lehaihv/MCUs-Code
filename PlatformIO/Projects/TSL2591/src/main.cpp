@@ -266,10 +266,10 @@ void loop(void)
   //analogWrite(17, 100);
   //analogWriteFrequency(5000);
   //analogWriteResolution(12);
-  analogWrite(4, 50);  // 0 to 1023: 200 400 600 800 1000
-  analogWrite(6, 100);
+  /* analogWrite(4, 50);  // 0 to 1023: 200 400 600 800 1000
+  analogWrite(6, 70);
   analogWrite(12, 150);
-  analogWrite(13, 200);
+  analogWrite(13, 200); */
   analogWrite(14, 250);
   //analogWrite(4, 50);  // 0 to 255: 50 100 150 200 250
   //analogWrite(6, 100); // 100
@@ -281,23 +281,25 @@ void loop(void)
   delay(1500);
   //simpleRead(); 
   advancedRead();
+  //global_lux = analogRead(6);
   delay(100);
   //digitalWrite(6, LOW);
   //digitalWrite(14, LOW);
-  analogWrite(4, 0);
+ /*  analogWrite(4, 0);
   analogWrite(6, 0);
   analogWrite(12, 0);
-  analogWrite(13, 0);
+  analogWrite(13, 0); */
   analogWrite(14, 0);
   //analogWrite(17, 0);
   // unifiedSensorAPIRead();
+  
   display.clearDisplay();
   display.setCursor(0, 20);
   display.println("Differential: "); 
   display.println();
-  display.print(global_lux*1000); //display.print("("); display.print(results * multiplier); display.println("mV)");
+  display.print(global_lux * 1000); //display.print("("); display.print(results * multiplier); display.println("mV)");
   //digitalWrite(4, LOW);
   //analogWrite(17, 0);
   display.display(); 
-  delay(5000);
+  delay(2000);//5000);
 }
