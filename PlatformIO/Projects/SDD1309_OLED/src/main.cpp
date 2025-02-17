@@ -28,7 +28,7 @@ Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
 double Setpoint, Input, Output;
 
 // Function
-float getAvg(int16_t arr[], int n);
+float getAvg(int16_t *arr, int n);
 
 void setup() {
   Serial.begin(115200);
@@ -101,6 +101,7 @@ void loop() {
   }
   results_f = getAvg(buff_adc, 5);
   Serial.printf("%.2f\n", results_f); */
+  results_f = getAvg(buff_adc, 5);
 
   Serial.print("Differential: "); Serial.print(results); Serial.print("("); Serial.print(results * multiplier); Serial.println("mV)");
   // digitalWrite(4, !digitalRead(4));
@@ -143,7 +144,7 @@ void loop() {
   delay(1000);*/
 }
 
-float getAvg(int16_t arr[], int n) {
+float getAvg(int16_t * arr, int n) {
     int16_t sum = 0;
 
     // Find the sum of all elements
