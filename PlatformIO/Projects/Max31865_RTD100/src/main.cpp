@@ -77,10 +77,10 @@ void loop() {
   Serial.println();
   delay(1000); */
 
-  Input = thermo.temperature(RNOMINAL, RREF); //analogRead(PIN_INPUT);
-  myPID.Compute();
-  analogWrite(PIN_OUTPUT, Output);
+  //Input = thermo.temperature(RNOMINAL, RREF); //analogRead(PIN_INPUT);
+  //myPID.Compute();
+  //analogWrite(PIN_OUTPUT, Output);
   Serial.println(thermo.temperature(RNOMINAL, RREF));
   //Serial.println();
-  //delay(5);
+  delay(1000);
 }
