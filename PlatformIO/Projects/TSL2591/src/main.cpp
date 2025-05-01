@@ -250,6 +250,7 @@ void unifiedSensorAPIRead(void)
   else
   {
     Serial.print(event.light); Serial.println(F(" lux"));
+    global_lux = event.light;
   }
 }
 
@@ -281,6 +282,8 @@ void loop(void)
   delay(1500);
   //simpleRead(); 
   advancedRead();
+  //simpleRead();
+  //unifiedSensorAPIRead();
   //global_lux = analogRead(6);
   delay(100);
   //digitalWrite(6, LOW);
