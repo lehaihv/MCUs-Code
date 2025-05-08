@@ -271,12 +271,14 @@ void loop(void)
   analogWrite(6, 70);
   analogWrite(12, 150);
   analogWrite(13, 200); */
-  analogWrite(14, 250);
-  //analogWrite(4, 50);  // 0 to 255: 50 100 150 200 250
-  //analogWrite(6, 100); // 100
-  //analogWrite(12, 150);
-  //analogWrite(13, 200);
   //analogWrite(14, 250);
+
+  //analogWrite(14, 50);  // 0 to 255: 50 100 150 200 250
+  //analogWrite(14, 100); // 100
+  //analogWrite(14, 150);
+  //analogWrite(14, 200);
+  analogWrite(14, 250);
+
   //digitalWrite(6, HIGH);
   //digitalWrite(14, HIGH);
   delay(1500);
