@@ -75,16 +75,16 @@ void displaySensorDetails(void)
 void configureSensor(void)
 {
   // You can change the gain on the fly, to adapt to brighter/dimmer light situations
-  // tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
-   tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
+   tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
+  // tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
   // tsl.setGain(TSL2591_GAIN_HIGH);   // 428x gain
   // tsl.setGain(TSL2591_GAIN_MAX);    // max gain (9876x)
   
   // Changing the integration time gives you a longer time over which to sense light
   // longer timelines are slower, but are good in very low light situtations!
-   tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
+  // tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_200MS);
-  // tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
+   tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_400MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_500MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
@@ -276,18 +276,18 @@ void loop(void)
   //analogWrite(14, 50);  // 0 to 255: 50 100 150 200 250
   //analogWrite(14, 100); // 100
   //analogWrite(14, 150);
-  //analogWrite(14, 200);
-  analogWrite(14, 250);
+  analogWrite(14, 200);
+  //analogWrite(14, 250);
 
   //digitalWrite(6, HIGH);
   //digitalWrite(14, HIGH);
-  delay(1500);
+  delay(2500);
   //simpleRead(); 
   advancedRead();
   //simpleRead();
   //unifiedSensorAPIRead();
   //global_lux = analogRead(6);
-  delay(100);
+  // delay(100);
   //digitalWrite(6, LOW);
   //digitalWrite(14, LOW);
  /*  analogWrite(4, 0);
@@ -306,5 +306,5 @@ void loop(void)
   //digitalWrite(4, LOW);
   //analogWrite(17, 0);
   display.display(); 
-  delay(2000);//5000);
+  delay(2500);//5000);
 }
