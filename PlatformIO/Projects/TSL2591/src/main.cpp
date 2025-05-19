@@ -283,8 +283,8 @@ void loop(void)
   //digitalWrite(14, HIGH);
   delay(2500);
   //simpleRead(); 
-  //advancedRead();
-  unifiedSensorAPIRead();
+  advancedRead();
+  //unifiedSensorAPIRead();
   //global_lux = analogRead(6);
   // delay(100);
   //digitalWrite(6, LOW);

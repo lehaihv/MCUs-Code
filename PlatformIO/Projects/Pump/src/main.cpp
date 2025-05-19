@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 
 #define IN1   12
@@ -5,7 +6,7 @@
 #define Valve 13
 
 int count = 0;
-int speed = 80;
+int speed = 120;
 
 void setup() {
   // put your setup code here, to run once:
@@ -35,18 +36,25 @@ void pump_off() {
 }
 
 void valve_water() {
-  digitalWrite(Valve, LOW);
+  digitalWrite(Valve, HIGH);
   //delay(100);
 }
 
 void valve_air() {
-  digitalWrite(Valve, HIGH);
+  digitalWrite(Valve, LOW);
   //delay(100);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   // take water to the pump input
+ /*  while(1){
+    valve_water();
+    delay(3000);
+    valve_air();
+    delay(3000);
+
+  } */
   valve_water();
   pump_on();
   delay(10000);
@@ -63,12 +71,28 @@ void loop() {
   valve_water();
   
 
-  while(count < 45) {
+  while(count < 15) { // 15 small wells
     // start cycle
     // pump 20 ul water and 10ul air 
     valve_water();
     pump_on();
     delay(1000); // 500us equal to ?ul
+    pump_off();
+    // valve air
+    valve_air();
+    pump_on();
+    delay(1000); 
+    pump_off();
+    count++;
+  }
+
+  count = 0;
+  while(count < 20) { // 20 large wells 
+    // start cycle
+    // pump 20 ul water and 10ul air 
+    valve_water();
+    pump_on();
+    delay(1500); // 500us equal to ?ul
     pump_off();
     // valve air
     valve_air();
