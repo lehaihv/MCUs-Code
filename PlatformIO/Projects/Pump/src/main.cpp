@@ -76,10 +76,10 @@ void loop() {
   pump(P1_IN1,P1_IN2, Valve_P1, 1, 0, 0);
 
   // Create 50 small wells
-  while(count < 50) { // 15 small wells
+  while(count < 50) { 
     // start cycle
     pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
-    delay(water_time); // 500us equal to ?ul
+    delay(water_time); 
 
     pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 0);
     delay(air_time); 
@@ -89,10 +89,10 @@ void loop() {
 
   // Create 1 large well
   count = 0;
-  while(count < 1) { // 1 large wells 
+  while(count < 1) {  
     // start cycle
     pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
-    delay(water_time*5); // 500us equal to ?ul
+    delay(water_time*5); 
 
     pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 0);
     delay(air_time); 
@@ -108,7 +108,7 @@ void loop() {
   pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 0);
   delay(buffer_time);
   
-  //pump_off();
+  // pump_off();
   pump(P1_IN1,P1_IN2, Valve_P1, 1, 0, 0);
 
   /* pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
@@ -119,10 +119,6 @@ void loop() {
 
   Serial.println("Button check!");
   while(1){
-    // stop pump, valve off
-    //valve_water();
-    //analogWrite(IN1, 0);
-    //pump_off();
     if (read_keypress(key_1)) {
         //Serial.println("Button pressed!");
         pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
@@ -141,7 +137,6 @@ void loop() {
         //Serial.println("Button not pressed.");
     }
   }
- 
 }
 
 // Function to control pump
