@@ -33,7 +33,7 @@ TwoWire I2C_TSL2591 = TwoWire(0);  // "0", "1" instance of I2C module bus
 TwoWire I2C_OLED = TwoWire(1); 
 
 // Declaration for an SSD1306 display connected to I2C1 (SDA1, SCL1 pins)
-Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED, 5); //, -1 if use RTS of ESP32-S3);
+Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED, -1); //, -1 if use RTS of ESP32-S3);
 // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED, -1);
 
 // connect SCL to I2C Clock

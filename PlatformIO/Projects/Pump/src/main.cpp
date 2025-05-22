@@ -1,199 +1,212 @@
 
 #include <Arduino.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-#define IN1   12
-#define IN2   11
-#define Valve 13
+// OLED display
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
+// Define pin for I2C module 2 ---> OLED display
+#define I2C_1_SDA 7
+#define I2C_1_SCL 15
+
+TwoWire I2C_OLED = TwoWire(1); 
+
+// Declaration for an SSD1306 display connected to I2C1
+Adafruit_SSD1306 display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &I2C_OLED, -1); //, -1 if use RTS of ESP32-S3);
+
+// Define control pin for Pump
+#define P1_IN1   17
+#define P1_IN2   16
+#define P2_IN1   4
+#define P3_IN1   5
+#define P4_IN1   6
+#define PCom_IN2 42 
+
+// Define control pin for Role
+#define Valve_P1 18
+#define Valve_P2 8
+#define Valve_P3 3
+#define Valve_P4 46
+#define Valve_P5 9
+
+// Define pin for keypress
+#define key_1 1
+#define key_2 2
+
+// Define constants
 #define buffer_time 5000
-#define water_time 2800
-#define air_time 2500
+#define water_time  2100     //2800
+#define air_time    1850     //2500
 
-int count = 0;
-int speed = 120;  // around 4ml/min
+// Variables
+int8_t count = 0;
+int8_t speed_4ml = 120;  // around 4ml/min
+bool lastButtonState = HIGH;
+int8_t lastDebounceTime = 0;
 
+// Constants
+const int8_t debounceDelay = 50;  // debounce delay in milliseconds
 
+// Functions
+void pump(int8_t pump_in1, int8_t pump_in2, int8_t valve, char direction, int8_t speed, char source);
+void set_pin_mode();
+void oled_startup();
+void show_on_display(const char* txt, int8_t x, int8_t y);
+bool read_keypress(int8_t key);
 
 void setup() {
   // put your setup code here, to run once:
-  //pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-  pinMode(Valve, OUTPUT);
-  //digitalWrite(IN1, LOW);
-  analogWrite(IN1, 0);
-  digitalWrite(IN2, LOW);
-  digitalWrite(Valve, HIGH);
-  // analogWrite(14, 250);
   Serial.begin(115200);
-  //Serial.setDebugOutput(false);
 
-  ////
-  Serial.println("WiFi connected");
-  
-}
-
-void pump_on() {
-  analogWrite(IN1, speed);
-  //digitalWrite(IN1, HIGH);
-}
-
-void pump_off() {
-  analogWrite(IN1, 0);
-  //delay(100);
-  //digitalWrite(IN1, LOW);
-}
-
-void valve_water() {
-  digitalWrite(Valve, HIGH);
-  //delay(100);
-}
-
-void valve_air() {
-  digitalWrite(Valve, LOW);
-  //delay(100);
+  // Set pin mode
+  set_pin_mode();
+    
+  // OLED initial
+  oled_startup();
+ 
 }
 
 void loop() {
-  // take the liqud to ready position
-  valve_water();
-  pump_on();
-  delay(12000);
-  pump_off();    
-  //while(1)
-  // put your main code here, to run repeatedly:
-  // take water to the pump input
- /*  while(1){
-    valve_water();
-    delay(3000);
-    valve_air();
-    delay(3000);
+  // Take the liqud to ready position
+  pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
+  delay(7500);
+  pump(P1_IN1,P1_IN2, Valve_P1, 1, 0, 0);
 
-  } */
-  valve_water();
-  pump_on();
-  delay(buffer_time);
-  // stop pump
-  //pump_off();
-  // valve air
-  valve_air();
-  // pump air buffer
-  //pump_on();
-  delay(buffer_time);
-  // stop pump
-  //pump_off();
-  // valve water
-  valve_water();
-  
-
+  // Create 50 small wells
   while(count < 50) { // 15 small wells
     // start cycle
-    // pump 20 ul water and 10ul air 
-    valve_water();
-    //pump_on();
+    pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
     delay(water_time); // 500us equal to ?ul
-    //pump_off();
-    // valve air
-    valve_air();
-    //pump_on();
+
+    pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 0);
     delay(air_time); 
-    //pump_off();
+    
     count++;
   }
 
+  // Create 1 large well
   count = 0;
-  while(count < 1) { // 20 large wells 
+  while(count < 1) { // 1 large wells 
     // start cycle
-    // pump 20 ul water and 10ul air 
-    valve_water();
-    //pump_on();
+    pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
     delay(water_time*5); // 500us equal to ?ul
-    //pump_off();
-    // valve air
-    valve_air();
-    //pump_on();
+
+    pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 0);
     delay(air_time); 
-    //pump_off();
+
     count++;
   }
   
   // pump water buffer
-  valve_water();
-  //pump_on();
-  delay(buffer_time);
-  //pump_off();
+  //pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
+  //delay(buffer_time);
+    
   // pump air buffer
-  valve_air();
-  //pump_on();
-  delay(buffer_time*2);
+  pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 0);
+  delay(buffer_time);
+  
   //pump_off();
-  valve_water();
+  pump(P1_IN1,P1_IN2, Valve_P1, 1, 0, 0);
 
-  valve_water();
-  pump_off();
+  /* pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
+  delay(3000);
+  pump(P1_IN1,P1_IN2, Valve_P1, 0, speed_4ml, 1);
+  delay(3000);
+  pump(P1_IN1,P1_IN2, Valve_P1, 1, 0, 0); */
 
+  Serial.println("Button check!");
   while(1){
     // stop pump, valve off
     //valve_water();
     //analogWrite(IN1, 0);
     //pump_off();
+    if (read_keypress(key_1)) {
+        //Serial.println("Button pressed!");
+        pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
+        delay(3000);
+        pump(P1_IN1,P1_IN2, Valve_P1, 1, 0, 0);
+    } else {
+        //Serial.println("Button not pressed.");
+    }
+    //delay(100);  // Adjust delay as needed
+    if (read_keypress(key_2)) {
+        //Serial.println("Button pressed!");
+        pump(P1_IN1,P1_IN2, Valve_P1, 0, speed_4ml, 1);
+        delay(3000);
+        pump(P1_IN1,P1_IN2, Valve_P1, 0, 0, 0);
+    } else {
+        //Serial.println("Button not pressed.");
+    }
   }
-  
-
-
-  /* digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
-  delay(5000);
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-  delay(5000); */
+ 
 }
 
-
-/* #include <Arduino.h>
-#include <WiFi.h>
-#include <time.h>
-
-// Replace with your network credentials
-const char* ssid = "Mix_2s";
-const char* password = "enterolertcam";
-
-// NTP server address
-const char* ntpServer = "pool.ntp.org";
-
-void setup() {
-  Serial.begin(115200);
-
-  // Connect to Wi-Fi
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+// Function to control pump
+// int8_t pump_in1, pump_in2, valve: control pins of pump and valve
+// char direction: pump direction: 1/Forward; 0/Backward
+// int8_t speed: pump flow rate
+// char source: 1/liquid; 0/Air
+void pump(int8_t pump_in1, int8_t pump_in2, int8_t valve, char direction, int8_t speed, char source){
+  (source == 1) ? digitalWrite(valve, HIGH) : digitalWrite(valve, LOW);
+  if (direction == 1) {// forward
+    show_on_display("Forward", 0, 20);
+    analogWrite(pump_in1, speed);
+    analogWrite(pump_in2, 0);
   }
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  // Configure time zone
-  configTime(-4*3600, 0, ntpServer); // GMT+1, no DST
-
-  // Wait for time to be synchronized
-  while (time(nullptr) == 0) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("Time synchronized");
+  else {
+    show_on_display("Backward", 0, 20);
+    analogWrite(pump_in1, 0);
+    analogWrite(pump_in2, speed);
+  } 
 }
 
-void loop() {
-  // Get current time
-  time_t now = time(nullptr);
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);
+void set_pin_mode(){
+  pinMode(Valve_P1, OUTPUT);
+  pinMode(key_1, INPUT_PULLUP);
+  pinMode(key_2, INPUT_PULLUP);
+}
 
-  // Print the current time
-  Serial.print("Current time: ");
-  Serial.print(asctime(&timeinfo));
+void oled_startup(){
+  I2C_OLED.begin(I2C_1_SDA, I2C_1_SCL);  // (I2C_1_SDA, I2C_1_SCL, 100000);
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64 0x3C (0x78/0x79 for SSD1309 Oled)
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+  delay(100);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  show_on_display("Hello, world!", 15, 10);
   delay(1000);
-} */
+}
+
+void show_on_display(const char* txt, int8_t x, int8_t y){
+  display.clearDisplay();
+  display.setCursor(x, y);
+  display.println(txt);
+  display.display();  
+}
+
+bool read_keypress(int8_t key){
+  static bool buttonState = HIGH;  // Current stable state
+
+    bool reading = digitalRead(key);
+
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();  // Reset debounce timer
+    }
+
+    // Check if the button state has been stable for the debounce delay
+    if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
+            buttonState = reading;
+        }
+    }
+
+    lastButtonState = reading;
+
+    return buttonState == LOW;  // Return true if button is pressed (active LOW)  
+}
