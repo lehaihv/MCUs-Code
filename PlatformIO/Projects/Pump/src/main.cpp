@@ -192,21 +192,16 @@ void show_on_display(const char* txt, int8_t x, int8_t y){
 
 bool read_keypress(int8_t key){
   static bool buttonState = HIGH;  // Current stable state
-
-    bool reading = digitalRead(key);
-
-    if (reading != lastButtonState) {
-        lastDebounceTime = millis();  // Reset debounce timer
+  bool reading = digitalRead(key);
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();  // Reset debounce timer
+  }
+  // Check if the button state has been stable for the debounce delay
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading != buttonState) {
+      buttonState = reading;
     }
-
-    // Check if the button state has been stable for the debounce delay
-    if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (reading != buttonState) {
-            buttonState = reading;
-        }
-    }
-
-    lastButtonState = reading;
-
-    return buttonState == LOW;  // Return true if button is pressed (active LOW)  
+  }
+  lastButtonState = reading;
+  return buttonState == LOW;  // Return true if button is pressed (active LOW)  
 }
