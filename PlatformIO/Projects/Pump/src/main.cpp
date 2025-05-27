@@ -56,6 +56,8 @@ void set_pin_mode();
 void oled_startup();
 void show_on_display(const char* txt, int8_t x, int8_t y);
 bool read_keypress(int8_t key);
+void system_clean(int8_t mins);
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -70,6 +72,10 @@ void setup() {
 }
 
 void loop() {
+
+  // Clean the system
+  system_clean(1);
+  while(1){}
   // Take the liqud to ready position
   pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
   delay(7500);
@@ -160,6 +166,7 @@ void pump(int8_t pump_in1, int8_t pump_in2, int8_t valve, char direction, int8_t
 
 void set_pin_mode(){
   pinMode(Valve_P1, OUTPUT);
+  digitalWrite(Valve_P1, LOW);
   pinMode(key_1, INPUT_PULLUP);
   pinMode(key_2, INPUT_PULLUP);
 }
@@ -199,4 +206,10 @@ bool read_keypress(int8_t key){
   }
   lastButtonState = reading;
   return buttonState == LOW;  // Return true if button is pressed (active LOW)  
+}
+
+void system_clean(int8_t mins){
+  pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
+  delay(mins*60000);
+  pump(P1_IN1,P1_IN2, Valve_P1, 1, 0, 0);
 }
