@@ -74,8 +74,8 @@ void setup() {
 void loop() {
 
   // Clean the system
-  system_clean(1);
-  while(1){}
+  //system_clean(1);
+  //while(1){}
   // Take the liqud to ready position
   pump(P1_IN1,P1_IN2, Valve_P1, 1, speed_4ml, 1);
   delay(7500);
