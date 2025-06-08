@@ -130,27 +130,15 @@ bool read_keypress(int8_t key){
   return buttonState == LOW;  // Return true if button is pressed (active LOW)  
 }
 
-void sync_time(void){
-  // NTP server address
+void sync_time(void) {
   const char* ntpServer = "pool.ntp.org";
-  // Time sychronization
-  // Configure time zone
   configTime(-4*3600, 0, ntpServer); // GMT-4, no DST
-
-  // Wait for time to be synchronized
-  while (time(nullptr) == 0) {
+  while (time(nullptr) < 100000) {
     delay(500);
     Serial.print(".");
   }
-  delay(1000);  //10000
-  Serial.println("Time synchronized");
-  // Get current time
+  /* Serial.println("Time synchronized");
   time_t now = time(nullptr);
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);
-
-  // Print the current time
-  /* Serial.print("Current time: ");
-  Serial.print(asctime(&timeinfo));
-  delay(1000); */
+  Serial.print("Current time: ");
+  Serial.println(ctime(&now)); */
 }
