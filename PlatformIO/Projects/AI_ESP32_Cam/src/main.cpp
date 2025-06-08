@@ -207,6 +207,123 @@ void capturePhotoSaveLittleFS(void) {
   sdFileName += timeString;
   sdFileName += ".jpg";
 
+  // Check free space before saving to SD card
+  uint64_t totalBytes = SD_MMC.totalBytes();
+  uint64_t usedBytes = SD_MMC.usedBytes();
+  uint64_t freeBytes = totalBytes - usedBytes;
+
+  Serial.print("SD card free space: ");
+  Serial.print(freeBytes);
+  Serial.println(" bytes");
+
+  // If not enough space, delete oldest .jpg file(s) until enough space
+  while (freeBytes < fb->len) {
+    File root = SD_MMC.open("/");
+    File oldestFile;
+    time_t oldestTime = time(nullptr);
+    while (true) {
+      File entry = root.openNextFile();
+      if (!entry) break;
+      String name = entry.name();
+      if (name.endsWith(".jpg")) {
+        time_t t = entry.getLastWrite();
+        if (t < oldestTime) {
+          oldestTime = t;
+          if (oldestFile) oldestFile.close();
+          oldestFile = entry;
+        } else {
+          entry.close();
+        }
+      } else {
+        entry.close();
+      }
+    }
+    if (oldestFile) {
+      Serial.print("Deleting oldest file: ");
+      Serial.println(oldestFile.name());
+      String toDelete = oldestFile.name();
+      oldestFile.close();
+      SD_MMC.remove(toDelete);
+      // Update free space
+      usedBytes = SD_MMC.usedBytes();
+      freeBytes = totalBytes - usedBytes;
+    } else {
+      Serial.println("No .jpg files to delete, cannot free space!");
+      break;
+    }
+  }
+
+  // Define age threshold (7 days in seconds)
+  const time_t ageThreshold = 7 * 24 * 60 * 60;
+  now = time(nullptr);
+
+  // Delete all .jpg files older than 1 week
+  File root = SD_MMC.open("/");
+  int deletedCount = 0;
+  while (true) {
+    File entry = root.openNextFile();
+    if (!entry) break;
+    String name = entry.name();
+    if (name.endsWith(".jpg")) {
+      time_t t = entry.getLastWrite();
+      if ((now - t) > ageThreshold) {
+        Serial.print("Deleting old file: ");
+        Serial.println(name);
+        entry.close();
+        SD_MMC.remove(name);
+        deletedCount++;
+        continue;
+      }
+    }
+    entry.close();
+  }
+  root.close();
+  if (deletedCount > 0) {
+    Serial.print("Deleted ");
+    Serial.print(deletedCount);
+    Serial.println(" old .jpg files.");
+  }
+
+  // Recalculate free space after deletion
+  usedBytes = SD_MMC.usedBytes();
+  freeBytes = SD_MMC.totalBytes() - usedBytes;
+
+  // If still not enough space, you can optionally delete more (e.g., oldest remaining files)
+  while (freeBytes < fb->len) {
+    File root = SD_MMC.open("/");
+    File oldestFile;
+    time_t oldestTime = now;
+    while (true) {
+      File entry = root.openNextFile();
+      if (!entry) break;
+      String name = entry.name();
+      if (name.endsWith(".jpg")) {
+        time_t t = entry.getLastWrite();
+        if (t < oldestTime) {
+          oldestTime = t;
+          if (oldestFile) oldestFile.close();
+          oldestFile = entry;
+        } else {
+          entry.close();
+        }
+      } else {
+        entry.close();
+      }
+    }
+    if (oldestFile) {
+      Serial.print("Deleting oldest file: ");
+      Serial.println(oldestFile.name());
+      String toDelete = oldestFile.name();
+      oldestFile.close();
+      SD_MMC.remove(toDelete);
+      usedBytes = SD_MMC.usedBytes();
+      freeBytes = SD_MMC.totalBytes() - usedBytes;
+    } else {
+      Serial.println("No .jpg files to delete, cannot free space!");
+      break;
+    }
+  }
+
   File sdfile = SD_MMC.open(sdFileName, FILE_WRITE);
   if (!sdfile) {
     Serial.println("Failed to open file on SD card");
