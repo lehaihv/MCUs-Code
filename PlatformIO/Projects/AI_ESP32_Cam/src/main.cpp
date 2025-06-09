@@ -9,6 +9,9 @@
 #include <time.h>
 #include <SD_MMC.h>
 
+// RTC variables
+RTC_DATA_ATTR int bootCount = 0; // Variable to count the number of boots
+
 // variables
 char send_time[30];
 
