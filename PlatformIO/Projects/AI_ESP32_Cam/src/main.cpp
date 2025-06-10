@@ -8,6 +8,7 @@
 #include <esp_sleep.h>
 #include <time.h>
 #include <SD_MMC.h>
+#include "esp_task_wdt.h" // Add this include
 
 // RTC variables
 RTC_DATA_ATTR int bootCount = 0; // Variable to count the number of boots
@@ -159,6 +160,10 @@ void setup() {
   // Turns off the ESP32-CAM white on-board LED (flash) connected to GPIO 4
   pinMode(4, OUTPUT);
   digitalWrite(4, LOW);
+  rtc_gpio_hold_en(GPIO_NUM_4); // Hold the GPIO state during deep sleep
+
+  esp_task_wdt_init(60, true); // 30 second timeout, reset on timeout
+  esp_task_wdt_add(NULL);      // Add current thread to WDT
 
   capturePhotoSaveLittleFS();
   sendPhoto();
@@ -167,11 +172,13 @@ void setup() {
 }
 
 void loop() {
+  esp_task_wdt_reset(); // Feed the watchdog
   delay(60000);
 }
 
 // Capture Photo and Save it to ESP_MAIL_DEFAULT_FLASH_FS and SD card
 void capturePhotoSaveLittleFS(void) {
+  esp_task_wdt_reset(); // Feed at start
   camera_fb_t* fb = NULL;
   for (int i = 0; i < 3; i++) {
     fb = esp_camera_fb_get();
@@ -292,9 +299,12 @@ void capturePhotoSaveLittleFS(void) {
   sdfile.close();
 
   esp_camera_fb_return(fb);
+  // Optionally feed again after long file operations
+  esp_task_wdt_reset();
 }
 
 void sendPhoto(void) {
+  esp_task_wdt_reset(); // Feed at start
   smtp.debug(1);
   smtp.callback(smtpCallback);
 
@@ -358,6 +368,8 @@ void sendPhoto(void) {
     delay(2000); // Optional: allow time for serial message to be sent
     ESP.restart(); // Restart the ESP32
   }
+  // Optionally feed again after long file operations
+  esp_task_wdt_reset();
 }
 
 void smtpCallback(SMTP_Status status) {
