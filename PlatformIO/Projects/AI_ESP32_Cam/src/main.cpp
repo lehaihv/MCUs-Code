@@ -162,7 +162,7 @@ void setup() {
   digitalWrite(4, LOW);
   rtc_gpio_hold_en(GPIO_NUM_4); // Hold the GPIO state during deep sleep
 
-  esp_task_wdt_init(60, true); // 30 second timeout, reset on timeout
+  esp_task_wdt_init(60, true); // 60 second timeout, reset on timeout
   esp_task_wdt_add(NULL);      // Add current thread to WDT
 
   capturePhotoSaveLittleFS();
