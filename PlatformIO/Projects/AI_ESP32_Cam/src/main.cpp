@@ -69,6 +69,10 @@ void setup() {
   esp_task_wdt_init(60, true); // 60 second timeout, reset on timeout
   esp_task_wdt_add(NULL);      // Add current thread to WDT
 
+  // Turn ON ESP32-CAM white on-board LED (GPIO 4)
+  pinMode(4, OUTPUT);
+  digitalWrite(4, HIGH);
+
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi...");
@@ -79,6 +83,10 @@ void setup() {
   Serial.println();
   Serial.print("IP Address: http://");
   Serial.println(WiFi.localIP());
+
+  // Turn OFF ESP32-CAM white on-board LED after WiFi connected
+  digitalWrite(4, LOW);
+  rtc_gpio_hold_en(GPIO_NUM_4); // Hold the GPIO state during deep sleep
 
   // Sync time
   sync_time();
@@ -161,9 +169,9 @@ void setup() {
   s->set_colorbar(s, 0);
 
   // Turns off the ESP32-CAM white on-board LED (flash) connected to GPIO 4
-  pinMode(4, OUTPUT);
+  /* pinMode(4, OUTPUT);
   digitalWrite(4, LOW);
-  rtc_gpio_hold_en(GPIO_NUM_4); // Hold the GPIO state during deep sleep
+  rtc_gpio_hold_en(GPIO_NUM_4); // Hold the GPIO state during deep sleep */
 
   /* esp_task_wdt_init(60, true); // 60 second timeout, reset on timeout
   esp_task_wdt_add(NULL);      // Add current thread to WDT */
