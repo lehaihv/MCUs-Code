@@ -175,6 +175,25 @@ void setup() {
   s->set_dcw(s, 1);
   s->set_colorbar(s, 0);
 
+  /* // set camera parameters
+  sensor_t * s = esp_camera_sensor_get();
+  s->set_brightness(s, 2);
+  s->set_contrast(s, 2);
+  s->set_saturation(s, 0);
+  s->set_special_effect(s, 0);
+  s->set_whitebal(s, 0);      // Disable auto white balance
+  s->set_wb_mode(s, 0);       // Manual WB, experiment for best blue
+  s->set_exposure_ctrl(s, 1); // Enable auto exposure
+  s->set_aec_value(s, 1200);  // Or higher for more sensitivity
+  s->set_gain_ctrl(s, 1);     // Enable gain control
+  s->set_agc_gain(s, 10);     // Increase gain for low light
+  s->set_lenc(s, 1);
+  s->set_raw_gma(s, 1);
+  s->set_hmirror(s, 0);
+  s->set_vflip(s, 0);
+  s->set_dcw(s, 1);
+  s->set_colorbar(s, 0); */
+
   // initialize EEPROM with predefined size
   EEPROM.begin(EEPROM_SIZE);
 
