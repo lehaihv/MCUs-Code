@@ -9,12 +9,19 @@
 #include <time.h>
 #include <SD_MMC.h>
 #include "esp_task_wdt.h" // Add this include
+#include <EEPROM.h>       // read and write from eeprom memory
+
+// define the number of bytes you want to access
+#define EEPROM_ADDRESS 0
+#define EEPROM_SIZE    64
+#define IMAGE_FREQ     5
 
 // RTC variables
 RTC_DATA_ATTR int bootCount = 0; // Variable to count the number of boots
 
 // variables
 char send_time[30];
+int pictureNumber = 0;
 
 // REPLACE WITH YOUR NETWORK CREDENTIALS
 const char* ssid = "Mix_2s";
@@ -25,7 +32,7 @@ const char* password = "enterolertcam";
 #define emailSenderPassword   "bclzgrxzxcfgoeea"
 #define smtpServer            "smtp.gmail.com"
 #define smtpServerPort        465
-#define emailSubject          "Enterolert-Cam Photo Captured"
+#define emailSubject          "Enterolert-Cam Photo Captured_2nd"
 #define emailRecipient        "haiirfvn1124@gmail.com"
 
 #define CAMERA_MODEL_AI_THINKER
@@ -168,6 +175,16 @@ void setup() {
   s->set_dcw(s, 1);
   s->set_colorbar(s, 0);
 
+  // initialize EEPROM with predefined size
+  EEPROM.begin(EEPROM_SIZE);
+
+  // Only reset pictureNumber in EEPROM if not WDT reset
+  esp_reset_reason_t reason = esp_reset_reason();
+  if (reason != ESP_RST_TASK_WDT && reason != ESP_RST_WDT) {
+    EEPROM.put(EEPROM_ADDRESS, 0); // Reset picture number in EEPROM
+    EEPROM.commit();   // Commit changes to EEPROM
+  }
+
   // Turns off the ESP32-CAM white on-board LED (flash) connected to GPIO 4
   /* pinMode(4, OUTPUT);
   digitalWrite(4, LOW);
@@ -176,15 +193,40 @@ void setup() {
   /* esp_task_wdt_init(60, true); // 60 second timeout, reset on timeout
   esp_task_wdt_add(NULL);      // Add current thread to WDT */
 
-  capturePhotoSaveLittleFS();
+  /* capturePhotoSaveLittleFS();
   sendPhoto();
   esp_sleep_enable_timer_wakeup(2*60*1000*1000);
-  esp_deep_sleep_start();
+  esp_deep_sleep_start(); */
 }
 
 void loop() {
-  esp_task_wdt_reset(); // Feed the watchdog
-  delay(60000);
+  // Read pictureNumber from EEPROM at the start of loop
+  pictureNumber = EEPROM.get(EEPROM_ADDRESS, pictureNumber);
+
+  while(pictureNumber < 5){
+    capturePhotoSaveLittleFS();
+    sendPhoto();
+    pictureNumber++;
+    EEPROM.put(EEPROM_ADDRESS, pictureNumber);
+    EEPROM.commit(); // Commit changes to EEPROM
+    Serial.print("Picture number: ");
+    Serial.println(pictureNumber);
+    // Delay between captures as image frequency
+    // is defined by IMAGE_FREQ constant
+    uint8_t i = 0;
+    while (i < IMAGE_FREQ) {
+      esp_task_wdt_reset(); // Feed the watchdog to prevent reset
+      delay(1000);
+      i++;
+    }
+    
+  }
+  while (1) // Infinite loop to prevent further execution
+  {
+    Serial.println("Maximum picture number reached. Entering deep sleep.");
+    delay(5000); // Allow time for serial message to be sent
+    esp_task_wdt_reset(); // Feed the watchdog
+  }
 }
 
 // Capture Photo and Save it to ESP_MAIL_DEFAULT_FLASH_FS and SD card
