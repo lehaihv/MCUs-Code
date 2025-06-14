@@ -14,8 +14,9 @@
 // define the number of bytes you want to access
 #define EEPROM_ADDRESS 0
 #define EEPROM_SIZE    64
-#define IMAGE_FREQ     5
-
+#define IMAGE_FREQ     30
+#define IMAGE_MAX      800  // 1 images every 2 minute, meaning 720 images every 24h, 
+                                                  
 // RTC variables
 RTC_DATA_ATTR int bootCount = 0; // Variable to count the number of boots
 
@@ -222,7 +223,7 @@ void loop() {
   // Read pictureNumber from EEPROM at the start of loop
   pictureNumber = EEPROM.get(EEPROM_ADDRESS, pictureNumber);
 
-  while(pictureNumber < 5){
+  while(pictureNumber < IMAGE_MAX){
     capturePhotoSaveLittleFS();
     sendPhoto();
     pictureNumber++;
@@ -235,7 +236,7 @@ void loop() {
     uint8_t i = 0;
     while (i < IMAGE_FREQ) {
       esp_task_wdt_reset(); // Feed the watchdog to prevent reset
-      delay(1000);
+      delay(10000);
       i++;
     }
     
