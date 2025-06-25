@@ -1,0 +1,47 @@
+To export your PyQt6 serial GUI as a standalone app (so it can run without Python installed), you should use [PyInstaller](https://pyinstaller.org/). Here’s how you can do it:
+
+---
+
+### 1. Install PyInstaller
+
+In your terminal, run:
+```bash
+pip install pyinstaller
+```
+
+---
+
+### 2. Package Your Script
+
+From your project directory, run:
+```bash
+pyinstaller --onefile --windowed GUI_Serial.py
+```
+- `--onefile`: Creates a single executable file.
+- `--windowed`: Prevents a terminal window from opening with your GUI (for Windows/macOS; on Linux, it’s harmless).
+
+---
+
+### 3. Find Your Executable
+
+After PyInstaller finishes, your standalone app will be in the `dist` folder:
+```
+dist/GUI_Serial
+```
+You can now run this file on any compatible system **without needing Python installed**.
+
+---
+
+### Notes
+
+- On Linux, you may need to give execute permission:
+  ```bash
+  chmod +x dist/GUI_Serial
+  ```
+- For Windows, the output will be `GUI_Serial.exe`.
+- If you use serial ports, make sure the target system has the necessary permissions (e.g., user in `dialout` group on Linux).
+
+---
+
+**Tip:**  
+If you want to include an icon, add `--icon=youricon.ico` to the PyInstaller command.
