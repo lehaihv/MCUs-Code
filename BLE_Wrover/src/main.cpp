@@ -13,9 +13,13 @@ bool deviceConnected = false;
 class MyServerCallbacks : public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
       deviceConnected = true;
+      Serial.println("Device connected!");
     }
     void onDisconnect(BLEServer* pServer) {
       deviceConnected = false;
+      Serial.println("Device disconnected, restarting ESP32...");
+      delay(1000); // Give time for message to be sent
+      ESP.restart(); // Reset ESP32 to be ready for new connection
     }
 };
 
@@ -42,7 +46,8 @@ void setup() {
 void loop() {
   static int msgCount = 0; // Add a static counter variable
   if (deviceConnected) {
-    String msg = "Hello from ESP32 #" + String(msgCount++);
+    msgCount = msgCount + 100; // Reset after 100 messages to avoid overflow
+    String msg = "Hello from ESP32 #" + String(msgCount);
     pCharacteristic->setValue(msg.c_str());
     pCharacteristic->notify();
     delay(1000); // Send every second
