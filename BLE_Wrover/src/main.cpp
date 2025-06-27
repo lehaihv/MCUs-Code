@@ -17,9 +17,9 @@ class MyServerCallbacks : public BLEServerCallbacks {
     }
     void onDisconnect(BLEServer* pServer) {
       deviceConnected = false;
-      Serial.println("Device disconnected, restarting ESP32...");
-      delay(1000); // Give time for message to be sent
-      ESP.restart(); // Reset ESP32 to be ready for new connection
+      Serial.println("Device disconnected, restarting advertising...");
+      // No need to clear peer devices unless you use bonding/pairing
+      pServer->getAdvertising()->start();
     }
 };
 
@@ -27,6 +27,7 @@ void setup() {
   Serial.begin(115200);
 
   BLEDevice::init("ESP32_BLE");
+  BLEDevice::setMTU(100); // Set MTU to 100 bytes (max is 517, but depends on client support)
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
@@ -44,12 +45,13 @@ void setup() {
 }
 
 void loop() {
-  static int msgCount = 0; // Add a static counter variable
+  static int msgCount = 0;
   if (deviceConnected) {
-    msgCount = msgCount + 100; // Reset after 100 messages to avoid overflow
-    String msg = "Hello from ESP32 #" + String(msgCount);
+    msgCount++;
+    String msg = "Hello message from ESP32 #" + String(msgCount);
     pCharacteristic->setValue(msg.c_str());
     pCharacteristic->notify();
-    delay(1000); // Send every second
+    Serial.println("Sending: " + msg); // Print the sending message
+    delay(2000); // Send every second
   }
 }
