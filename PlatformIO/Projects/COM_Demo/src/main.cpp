@@ -4,6 +4,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Hello, ESP32!");
   delay(1000);
+  analogWrite(12, 50); // Set GPIO 2 to a PWM value of 128 (50% duty cycle)
 }
 
 void loop() {
