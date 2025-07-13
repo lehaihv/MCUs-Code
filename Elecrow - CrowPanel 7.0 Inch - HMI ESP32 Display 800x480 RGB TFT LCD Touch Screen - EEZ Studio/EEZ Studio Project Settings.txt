@@ -1,0 +1,29 @@
+CROWPANEL_7_INCH-GETTING_STARTED
+
+Bitmap :
+- img_light_bulb_off
+- img_light_bulb_on
+
+Panel "panel_header" :
+- Size :
+  > Width : 800
+  > Height : 60
+- Background Color : #2196f3
+- Border :
+  > Width : 0
+- Miscellaneous
+  > Radius : 0
+  
+Label "label_header" : CrowPanel 7.0 Inch HMI ESP32 Display 800x480 RGB TFT LCD Touch Screen
+- Text :
+  > Font : MONTSERRAT_22
+
+Image "image_bulb".
+
+Switch "switch_led" :
+- Knob part :
+  > Padding :
+    - Top     : -8
+    - Bottom  : -8
+    - Left    : -8
+    - Right   : -8

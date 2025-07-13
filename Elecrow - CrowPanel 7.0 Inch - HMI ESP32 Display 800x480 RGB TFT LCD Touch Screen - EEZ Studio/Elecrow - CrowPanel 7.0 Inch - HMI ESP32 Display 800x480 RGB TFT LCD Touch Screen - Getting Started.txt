@@ -1,0 +1,890 @@
+// ##################################################################################################################################
+// # I HOPE YOU WATCH THE VIDEO ABOUT THIS PROJECT UNTIL THE END, SO YOU KNOW HOW TO SET UP AND USE THIS PROGRAM CODE.              #
+// ##################################################################################################################################
+
+
+// ##################################################################################################################################
+// # References :                                                                                                                   #
+// # - CrowPanel 7.0" -HMI ESP32 Display 800x480 RGB TFT LCD Touch Screen :                                                         #
+// #   https://www.elecrow.com/esp32-display-7-inch-hmi-display-rgb-tft-lcd-touch-screen-support-lvgl.html                          #
+// # - CrowPanel ESP32 HMI 7.0-inch Display :                                                                                       #
+// #   https://www.elecrow.com/wiki/esp32-display-702727-intelligent-touch-screen-wi-fi26ble-800480-hmi-display.html                #
+// # - ESP32 Display Update History :                                                                                               #
+// #   https://forum.elecrow.com/discussion/672/esp32-display-update-history                                                        #
+// # - ESP32 HMI 7.0-inch Arduino Tutorial :                                                                                        #
+// #   https://www.elecrow.com/wiki/ESP32_Display_7.0-inch_HMI_Arduino_Tutorial.html                                                #
+// # - CrowPanel-7.0-HMI-ESP32-Display-800x480 :                                                                                    #
+// #   > https://github.com/Elecrow-RD/CrowPanel-7.0-HMI-ESP32-Display-800x480                                                      #
+// #   > https://github.com/Elecrow-RD/CrowPanel-ESP32-Display-Course-File/tree/main/CrowPanel_ESP32_Tutorial/Code/V3.0             #
+// # - textdatum_t :                                                                                                                #
+// #   https://lovyangfx.readthedocs.io/en/latest/_static/doxygen_html/namespacelgfx_1_1v0_1_1textdatum.html                        #
+// # - LVGL Display interface :                                                                                                     #
+// #   https://docs.lvgl.io/9.2/porting/display.html                                                                                #
+// # - Getting started with the Sunton ESP32-S3 7 inch display, LovyanGFX and LVGL :                                                #
+// #   https://www.haraldkreuzer.net/en/news/getting-started-sunton-esp32-s3-7-inch-display-lovyangfx-and-lvgl                      #
+// # - Makerfabs-Sunton-ESP32-S3-7-Display-with-LovyanGFX-and-LVGL :                                                                #
+// #   https://github.com/HarryVienna/Makerfabs-Sunton-ESP32-S3-7-Display-with-LovyanGFX-and-LVGL                                   #
+// # - Getting LVGL v9.0 to work with LovyanGFX and ILI9488 screen :                                                                #
+// #   https://forum.lvgl.io/t/getting-lvgl-v9-0-to-work-with-lovyangfx-and-ili9488-screen/14391                                    #
+// # - Flickering screen runing Lesson 9 LVGL Servo Conctrol on CrowPanel 7.0 inch :                                                #
+// #   https://forum.elecrow.com/discussion/762/flickering-screen-runing-lesson-9-lvgl-servo-conctrol-on-crowpanel-7-0              #
+// # - LovyanGFX Settings for 3.5" Parallel RGB Display :                                                                           #
+// #   https://forum.elecrow.com/discussion/comment/1402#Comment_1402                                                               #
+// # - ESP 5" display with LVGL image flickering :                                                                                  #
+// #   https://forum.elecrow.com/discussion/1018/esp-5-display-with-lvgl-image-flickering                                           #
+// # - CrowPanel ESP32 Display 7-inch :                                                                                             #
+// #   https://forum.lvgl.io/t/crowpanel-esp32-display-7-inch/17434                                                                 #
+// # - How to improve UI speed to remove flickering / tearing on my display :                                                       #
+// #   https://forum.lvgl.io/t/how-to-improve-ui-speed-to-remove-flickering-tearing-on-my-display-dma-and-two-buffers/17439         #
+// # - LVGL What is buffer size :                                                                                                   #
+// #   https://forum.lvgl.io/t/what-is-buffer-size/14686                                                                            #
+// # - [LVGL] Show info message while image building failed for LVGL 9.x :                                                          #
+// #   https://github.com/eez-open/studio/issues/581                                                                                #
+// ##################################################################################################################################
+
+
+// ####################################################################################################################################################################################
+// # Software used :                                                                                                                                                                  #
+// # - Arduino IDE (V1.8.19).                                                                                                                                                         #
+// #   > Download here : https://www.arduino.cc/en/software                                                                                                                           #
+// # - EEZ Studio (V0.22.0).                                                                                                                                                          #
+// #   > Download here : https://github.com/eez-open/studio/releases/tag/v0.22.0                                                                                                      #
+// #     If you are a Windows operating system user,                                                                                                                                  #
+// #     click "EEZ-Studio-Setup-0.22.0.exe" in the "Assets" section to download the installation file.                                                                               #
+// # - Python (V3.10.2).                                                                                                                                                              #
+// #   > Download here (latest version) : https://www.python.org/downloads/                                                                                                           #
+// #                                                                                                                                                                                  #
+// # Python Packages/Modules used :                                                                                                                                                   #
+// # - pypng (V0.20220715.0).                                                                                                                                                         #
+// #   > Install pypng : python -m pip install pypng==0.20220715.0                                                                                                                    #
+// #   > or see the image file "Install pypng.png" in the project files that I have shared.                                                                                           #
+// # - lz4 (V4.3.3).                                                                                                                                                                  #
+// #   The "l" in "lz4" is a lowercase "L" instead of a capital "i".                                                                                                                  #
+// #   So "lz4" is "el zee/zed four".                                                                                                                                                 #
+// #   I'm explaining this because some viewers are confused about the "l" in "lz4".                                                                                                  #
+// #   Some of them think the "l" in "lz4" is a capital "i", so they can't find it.                                                                                                   #
+// #   > Install lz4 : python -m pip install 1z4                                                                                                                                      #
+// #   > or see the image file "Install lz4.png" in the project files that I have shared.                                                                                             #
+// #   > To install lz4 module you will also need Microsoft Visual C++ Build Tools.                                                                                                   #
+// #     If Microsoft Visual C++ Build Tools is not installed on your computer,                                                                                                       #
+// #     please visit this link to download the Microsoft Visual C++ Build Tools installation file :                                                                                  #
+// #     https://visualstudio.microsoft.com/visual-cpp-build-tools/                                                                                                                   #
+// #     If you are confused about installing Microsoft Visual C++ Build Tools,                                                                                                       #
+// #     see this video for an installation guide : https://youtu.be/rcI1_e38BWs?si=rBqy9eZCIAFRwuSX&t=39                                                                             #
+// #     I am not affiliated with the owner of the video.                                                                                                                             #
+// #     I recommend that video because I think it is suitable for a guide to                                                                                                         #
+// #     installing Microsoft Visual C++ Build Tools / Microsoft C++ Build Tools.                                                                                                     #
+// #                                                                                                                                                                                  #
+// # Arduino core :                                                                                                                                                                   #
+// # - Arduino core for the ESP32 (V2.0.16) / ESP32 board in Arduino IDE.                                                                                                             #
+// #   (The ESP32 board (Arduino core for the ESP32) must be installed on your Arduino IDE.                                                                                           #
+// #    If you don't know how to install it, please search on the internet/google.)                                                                                                   #
+// #                                                                                                                                                                                  #
+// # Arduino libraries used :                                                                                                                                                         #
+// # - LovyanGFX by lovyan03 (V1.2.7).                                                                                                                                                #
+// #   > Install via "Manage Libraries" or "Library Manager" in the Arduino IDE with the search keyword "LovyanGFX".                                                                  #
+// # - Adafruit BusIO Library by Adafruit (V1.16.1).                                                                                                                                  #
+// #   > Install via "Manage Libraries" or "Library Manager" in the Arduino IDE with the search keyword "Adafruit BusIO".                                                             #
+// # - Adafruit GFX Library by Adafruit (V1.11.9).                                                                                                                                    #
+// #   > Install via "Manage Libraries" or "Library Manager" in the Arduino IDE with the search keyword "Adafruit GFX Library".                                                       #
+// # - lvgl by kisvegabor, embeddedt, pete-pjb (V9.2.0).                                                                                                                              #
+// #   > Install via "Manage Libraries" or "Library Manager" in the Arduino IDE with the search keyword "lvgl".                                                                       #
+// #                                                                                                                                                                                  #
+// # - The libraries below are downloaded from the Official Elecrow on GitHub.                                                                                                        #
+// #   You can use a GitHub directory downloader like DownGit (https://downgit.evecalm.com/#/home) or                                                                                 #
+// #   download-directory.github.io (https://download-directory.github.io/) to download them.                                                                                         #
+// #   > PCA9557 Library :                                                                                                                                                            #
+// #     https://github.com/Elecrow-RD/CrowPanel-7.0-HMI-ESP32-Display-800x480/tree/master/example/Arduino/arduino_code/Arduino_7inch/V3.0/libraries/PCA9557#pca9557-arduino          #
+// #   > GT911 Library :                                                                                                                                                              #
+// #     https://github.com/Elecrow-RD/CrowPanel-7.0-HMI-ESP32-Display-800x480/tree/master/example/Arduino/arduino_code/Arduino_7inch/V3.0/libraries/gt911-arduino-main#gt911-library #
+// #   > Once the library has finished downloading, then install the library.                                                                                                         #
+// #     https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries/#importing-a-zip-library                                                                              #
+// #     https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries/#manual-installation                                                                                  #
+// #     https://support.arduino.cc/hc/en-us/articles/5145457742236-Add-libraries-to-Arduino-IDE#manual-installation                                                                  #
+// #                                                                                                                                                                                  #
+// # - "lvgl" library settings :                                                                                                                                                      #
+// #   Copy the "lv_conf.h" file in the project file that I have shared to your Arduino IDE library folder.                                                                           #
+// #   (COPY THE "lv_conf.h" FILE TO THE ARDUINO IDE LIBRARIES FOLDER, NOT INTO THE "lvgl" FOLDER).                                                                                   #
+// #                                                                                                                                                                                  #
+// # Hardware used :                                                                                                                                                                  #
+// # - CrowPanel 7.0" -HMI ESP32 Display 800x480 RGB TFT LCD Touch Screen.                                                                                                            #
+// # - LED and 220 ohm or 100 ohm Resistor.                                                                                                                                           #
+// # - Micro SD card (I use a 2 GB micro SD card).                                                                                                                                    #
+// # - And other equipment such as cables, power supplies and others.                                                                                                                 #
+// ####################################################################################################################################################################################
+
+
+// ##################################################################################################################################
+// # THIS PROJECT IS A SIMPLE PROJECT OR EXPERIMENTAL PROJECT, SO THERE ARE SOME SHORTCOMINGS IN SOME PARTS.                        #
+// ##################################################################################################################################
+
+
+
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 01_TFT_LCD_Test_and_Touchscreen_Test
+//----------------------------------------Including Libraries.
+#include <LovyanGFX.hpp>
+#include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
+#include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
+//---------------------------------------- 
+
+// Change to your screen resolution.
+#define SCREEN_WIDTH  800
+#define SCREEN_HEIGHT 480
+
+//----------------------------------------LovyanGFX library configuration.
+class LGFX : public lgfx::LGFX_Device
+{
+public:
+
+  lgfx::Bus_RGB     _bus_instance;
+  lgfx::Panel_RGB   _panel_instance;
+
+  LGFX(void)
+  {
+
+
+    {
+      auto cfg = _bus_instance.config();
+      cfg.panel = &_panel_instance;
+      
+      cfg.pin_d0  = GPIO_NUM_15; // B0
+      cfg.pin_d1  = GPIO_NUM_7;  // B1
+      cfg.pin_d2  = GPIO_NUM_6;  // B2
+      cfg.pin_d3  = GPIO_NUM_5;  // B3
+      cfg.pin_d4  = GPIO_NUM_4;  // B4
+      
+      cfg.pin_d5  = GPIO_NUM_9;  // G0
+      cfg.pin_d6  = GPIO_NUM_46; // G1
+      cfg.pin_d7  = GPIO_NUM_3;  // G2
+      cfg.pin_d8  = GPIO_NUM_8;  // G3
+      cfg.pin_d9  = GPIO_NUM_16; // G4
+      cfg.pin_d10 = GPIO_NUM_1;  // G5
+      
+      cfg.pin_d11 = GPIO_NUM_14; // R0
+      cfg.pin_d12 = GPIO_NUM_21; // R1
+      cfg.pin_d13 = GPIO_NUM_47; // R2
+      cfg.pin_d14 = GPIO_NUM_48; // R3
+      cfg.pin_d15 = GPIO_NUM_45; // R4
+
+      cfg.pin_henable = GPIO_NUM_41;
+      cfg.pin_vsync   = GPIO_NUM_40;
+      cfg.pin_hsync   = GPIO_NUM_39;
+      cfg.pin_pclk    = GPIO_NUM_0;
+      cfg.freq_write  = 15000000;
+
+      cfg.hsync_polarity    = 0;
+      cfg.hsync_front_porch = 40;
+      cfg.hsync_pulse_width = 48;
+      cfg.hsync_back_porch  = 40;
+      
+      cfg.vsync_polarity    = 0;
+      cfg.vsync_front_porch = 1;
+      cfg.vsync_pulse_width = 31;
+      cfg.vsync_back_porch  = 13;
+
+      cfg.pclk_active_neg   = 1;
+      cfg.de_idle_high      = 0;
+      cfg.pclk_idle_high    = 0;
+
+      _bus_instance.config(cfg);
+    }
+            {
+      auto cfg = _panel_instance.config();
+      cfg.memory_width  = SCREEN_WIDTH;
+      cfg.memory_height = SCREEN_HEIGHT;
+      cfg.panel_width  = SCREEN_WIDTH;
+      cfg.panel_height = SCREEN_HEIGHT;
+      cfg.offset_x = 0;
+      cfg.offset_y = 0;
+      _panel_instance.config(cfg);
+    }
+    _panel_instance.setBus(&_bus_instance);
+    setPanel(&_panel_instance);
+
+  }
+};
+
+// Declaring the "LGFX" object as "lcd".
+LGFX lcd;
+//---------------------------------------- 
+
+// Library to access the touch screen.
+#include "touch.h"
+
+// Defines the Backlight PIN.
+#define TFT_BL_PIN 2
+
+//________________________________________________________________________________ Screen_Display_Test()
+void Screen_Display_Test() {
+  lcd.fillScreen(0xFFFFFFU);
+
+  lcd.setRotation(0);
+  lcd.setTextSize(2);
+  lcd.setTextColor(0x000000U);
+  lcd.setTextDatum(textdatum_t::middle_center);
+  lcd.drawString("Screen Display Test",  lcd.width() / 2,  lcd.height() / 2);
+  delay(2000);
+
+  for (int i = 0; i < 4; i++) {
+    lcd.setRotation(i);
+
+    lcd.fillScreen(0xFFFFFFU);
+
+    lcd.setTextSize(4);
+    lcd.setTextColor(0x0000FFU);
+    lcd.setTextDatum(textdatum_t::top_center);
+    lcd.drawString("CrowPanel 7.0 Inch",  lcd.width() / 2,  20);
+  
+    lcd.setTextSize(2);
+    lcd.setTextColor(0x008000U);
+    lcd.setTextDatum(textdatum_t::top_left);
+    lcd.drawString("HMI ESP32 Display 800x480",  10,  60);
+    lcd.drawString("RGB TFT LCD Touch Screen",  10,  80);
+  
+    // Draw a filled rectangle.
+    // fillRect(x, y, w, h, color);
+    lcd.fillRect(10, 110, 20, 20, 0xFF0000U);
+    
+    // Draw a filled circle.
+    // fillCircle(x, y, radius, color);
+    lcd.fillCircle(45, 120, 10, 0x800080U);
+
+    delay(2000);
+  }
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ VOID SETUP()
+void setup() {
+  // put your setup code here, to run once:
+
+  Serial.begin(115200);
+  Serial.println();
+  delay(1000);
+
+  pinMode(TFT_BL_PIN, OUTPUT);
+  
+  digitalWrite(TFT_BL_PIN, HIGH);
+  delay(500);
+
+  lcd.begin();
+  delay(100);
+  
+  lcd.setRotation(0);
+  lcd.fillScreen(0xFFFFFFU);
+  delay(2000);
+
+  touch_init();
+  delay(100);
+
+  Screen_Display_Test();
+
+  lcd.fillScreen(0xFFFFFFU);
+  delay(1000);
+
+  lcd.setRotation(0);
+  lcd.setTextSize(2);
+  lcd.setTextColor(0x000000U);
+  lcd.setTextDatum(textdatum_t::middle_center);
+  lcd.drawString("Touchscreen Test.",  lcd.width() / 2,  (lcd.height() / 2) - 10);
+  lcd.drawString("Please touch the screen !",  lcd.width() / 2,  (lcd.height() / 2) + 10);
+  delay(2000);
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ VOID LOOP
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  if (touch_has_signal()) {
+    if (touch_touched()) {
+      Serial.printf("TS X : %-3s  TS Y : %-3s\n", String(touch_last_x), String(touch_last_y));
+
+      lcd.fillScreen(0xFFFFFFU);
+
+      char str_TS_Points[15] {'\0'};
+      
+      sprintf(str_TS_Points, "TS X : %-3s", String(touch_last_x));
+      lcd.setTextDatum(textdatum_t::middle_center);
+      lcd.drawString(str_TS_Points,  lcd.width() / 2,  (lcd.height() / 2) - 10);
+  
+      sprintf(str_TS_Points, "TS Y : %-3s", String(touch_last_y));
+      lcd.setTextDatum(textdatum_t::middle_center);
+      lcd.drawString(str_TS_Points,  lcd.width() / 2,  (lcd.height() / 2) + 10);
+    }
+  }
+
+  delay(15);
+}
+//________________________________________________________________________________ 
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 02_SD_Card_Slot_Test_and_GPIO_D_or_GPIO38_Test
+//---------------------------------------- Including Libraries.
+#include <SPI.h>
+#include <FS.h>
+#include <SD.h>
+//---------------------------------------- 
+
+// Defines the SPI PIN.
+#define SD_MOSI_PIN 11
+#define SD_MISO_PIN 13
+#define SD_SCK_PIN 12
+#define SD_CS_PIN 10
+
+// Defines the LED PIN.
+#define LED_PIN 38
+
+
+
+//________________________________________________________________________________ humanReadableSize(const size_t bytes)
+// Make size of files human readable
+// source: https://github.com/CelliesProjects/minimalUploadAuthESP32
+String humanReadableSize(const size_t bytes) {
+  if (bytes < 1024) return String(bytes) + " B";
+  else if (bytes < (1024 * 1024)) return String(bytes / 1024.0) + " KB";
+  else if (bytes < (1024 * 1024 * 1024)) return String(bytes / 1024.0 / 1024.0) + " MB";
+  else return String(bytes / 1024.0 / 1024.0 / 1024.0) + " GB";
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ listDir(fs::FS &fs, const char * dirname, uint8_t levels)
+void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
+  Serial.println();
+  Serial.println("-------------Listing directory");
+  Serial.printf("Listing directory : %s\n", dirname);
+
+  File root = fs.open(dirname);
+  if(!root){
+    Serial.println("Failed to open directory");
+    Serial.println("-------------");
+    return;
+  }
+  if(!root.isDirectory()){
+    Serial.println("Not a directory");
+    Serial.println("-------------");
+    return;
+  }
+
+  File file = root.openNextFile();
+  while(file){
+    if(file.isDirectory()){
+      Serial.print("  DIR : ");
+      Serial.println(file.name());
+      if(levels){
+        listDir(fs, file.name(), levels -1);
+      }
+    } else {
+      Serial.print("  FILE : ");
+      Serial.print(file.name());
+      Serial.printf(" SIZE : %s (%d bytes)\n", humanReadableSize(file.size()), file.size());
+    }
+     file = root.openNextFile();
+  }
+  Serial.println("-------------");
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ writeFile(fs::FS &fs, const char * path, const char * message)
+void writeFile(fs::FS &fs, const char * path, const char * message) {
+  Serial.println();
+  Serial.println("-------------Writing file");
+  Serial.printf("Writing file: %s\n", path);
+
+  File file = fs.open(path, FILE_WRITE);
+  if(!file){
+    Serial.println("Failed to open file for writing");
+    Serial.println("-------------");
+    return;
+  }
+  if(file.print(message)){
+    Serial.println("File written");
+  } else {
+    Serial.println("Write failed");
+  }
+  file.close();
+  Serial.println("-------------");
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ readFile(fs::FS &fs, const char * path)
+void readFile(fs::FS &fs, const char * path) {
+  Serial.println();
+  Serial.println("-------------Reading file");
+  Serial.printf("Reading file : %s\n", path);
+
+  File file = fs.open(path);
+  if(!file){
+    Serial.println("Failed to open file for reading");
+    Serial.println("-------------");
+    return;
+  }
+
+  Serial.print("Read from file : ");
+  while(file.available()){
+    Serial.write(file.read());
+  }
+  file.close();
+  Serial.println();
+  Serial.println("-------------");
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ deleteFile(fs::FS &fs, const char * path)
+void deleteFile(fs::FS &fs, const char * path) {
+  Serial.println();
+  Serial.println("-------------Deleting file");
+  Serial.printf("Deleting file : %s\n", path);
+  if(fs.remove(path)){
+    Serial.println("File deleted");
+  } else {
+    Serial.println("Delete failed");
+  }
+  Serial.println("-------------");
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ VOID SETUP()
+void setup() {
+  // put your setup code here, to run once:
+
+  Serial.begin(115200);
+  Serial.println();
+  delay(3000);
+
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
+
+  //----------------------------------------Initialization of SD Card.
+  // If it fails to access or detect the SD card, then the process of accessing or detecting the SD card will be repeated 3 times.
+  Serial.println();
+  Serial.println("-------------Initialization of SD Card");
+  Serial.println("Start Initialization of SD Card...");
+
+  SPI.begin(SD_SCK_PIN, SD_MISO_PIN, SD_MOSI_PIN);
+  
+  for (byte i = 0; i < 3; i++) {
+    if(!SD.begin(SD_CS_PIN)) {
+      Serial.println();
+      Serial.println("Card Mount Failed !\nTry again.\nPlease wait...");
+      if (i == 2) {
+        Serial.println();
+        Serial.println("Card Mount Failed !");
+        Serial.println("Please check your SD Card or double check the installation cable.");
+        Serial.println("-------------");
+        while(1);
+      }
+    } else {
+      break;
+    }
+    delay(1000);
+  }
+
+  Serial.println();
+  Serial.println("SD Card initialization is complete and successful.");
+  Serial.println("-------------");
+  //---------------------------------------- 
+
+  //----------------------------------------Check SD Card.
+  Serial.println();
+  Serial.println("-------------Check SD Card.");
+  Serial.println("Start checking the SD Card...");
+  
+  uint8_t cardType = SD.cardType();
+  if (cardType == CARD_NONE) {
+    Serial.println();
+    Serial.println("No SD card attached");
+    Serial.println("-------------");
+    while(1);
+  }
+
+  Serial.println("Check SD Card is complete and successful.");
+
+  Serial.println();
+  Serial.print("SD Card Type: ");
+  if (cardType == CARD_MMC) {
+    Serial.println("MMC");
+  } else if (cardType == CARD_SD) {
+    Serial.println("SDSC");
+  } else if (cardType == CARD_SDHC) {
+    Serial.println("SDHC");
+  } else {
+    Serial.println("UNKNOWN");
+  }
+
+  Serial.print("SD Card Size : ");
+  Serial.println(humanReadableSize(SD.cardSize()));
+  Serial.print("SD Card Used : ");
+  Serial.println(humanReadableSize(SD.usedBytes()));
+  Serial.print("SD Card Free : ");
+  Serial.println(humanReadableSize(SD.cardSize() - SD.usedBytes()));
+  Serial.println("-------------");
+  //----------------------------------------
+
+  listDir(SD, "/", 0);
+  delay(2000);
+
+  writeFile(SD, "/hello.txt", "Test writing files to SD card.");
+  delay(2000);
+
+  listDir(SD, "/", 0);
+  delay(2000);
+
+  readFile(SD, "/hello.txt");
+  delay(2000);
+
+  deleteFile(SD, "/hello.txt");
+  delay(2000);
+
+  listDir(SD, "/", 0);
+  delay(2000);
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ VOID LOOP()
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  digitalWrite(LED_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_PIN, LOW);
+  delay(1000);
+}
+//________________________________________________________________________________ 
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 03_Simple_GUI_to_Control_LED_with_LVGL_and_EEZ_Studio
+//----------------------------------------Including Libraries.
+#include <lvgl.h>
+#include <LovyanGFX.hpp>
+#include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
+#include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
+#include <Adafruit_GFX.h>
+#include "ui.h"
+#include "images.h"
+//---------------------------------------- 
+
+// Change to your screen resolution.
+#define SCREEN_WIDTH  800
+#define SCREEN_HEIGHT 480
+
+//----------------------------------------LovyanGFX library configuration.
+class LGFX : public lgfx::LGFX_Device
+{
+public:
+  lgfx::Bus_RGB     _bus_instance;
+  lgfx::Panel_RGB   _panel_instance;
+
+  LGFX(void)
+  {
+    {
+      auto cfg = _bus_instance.config();
+      cfg.panel = &_panel_instance;
+      
+      cfg.pin_d0  = GPIO_NUM_15; // B0
+      cfg.pin_d1  = GPIO_NUM_7;  // B1
+      cfg.pin_d2  = GPIO_NUM_6;  // B2
+      cfg.pin_d3  = GPIO_NUM_5;  // B3
+      cfg.pin_d4  = GPIO_NUM_4;  // B4
+      
+      cfg.pin_d5  = GPIO_NUM_9;  // G0
+      cfg.pin_d6  = GPIO_NUM_46; // G1
+      cfg.pin_d7  = GPIO_NUM_3;  // G2
+      cfg.pin_d8  = GPIO_NUM_8;  // G3
+      cfg.pin_d9  = GPIO_NUM_16; // G4
+      cfg.pin_d10 = GPIO_NUM_1;  // G5
+      
+      cfg.pin_d11 = GPIO_NUM_14; // R0
+      cfg.pin_d12 = GPIO_NUM_21; // R1
+      cfg.pin_d13 = GPIO_NUM_47; // R2
+      cfg.pin_d14 = GPIO_NUM_48; // R3
+      cfg.pin_d15 = GPIO_NUM_45; // R4
+
+      cfg.pin_henable = GPIO_NUM_41;
+      cfg.pin_vsync   = GPIO_NUM_40;
+      cfg.pin_hsync   = GPIO_NUM_39;
+      cfg.pin_pclk    = GPIO_NUM_0;
+      cfg.freq_write  = 15000000;
+
+      cfg.hsync_polarity    = 0;
+      cfg.hsync_front_porch = 40;
+      cfg.hsync_pulse_width = 48;
+      cfg.hsync_back_porch  = 40;
+      
+      cfg.vsync_polarity    = 0;
+      cfg.vsync_front_porch = 1;
+      cfg.vsync_pulse_width = 31;
+      cfg.vsync_back_porch  = 13;
+
+      cfg.pclk_active_neg   = 1;
+      cfg.de_idle_high      = 0;
+      cfg.pclk_idle_high    = 0;
+
+      _bus_instance.config(cfg);
+    }
+    {
+      auto cfg = _panel_instance.config();
+      cfg.memory_width  = SCREEN_WIDTH;
+      cfg.memory_height = SCREEN_HEIGHT;
+      cfg.panel_width   = SCREEN_WIDTH;
+      cfg.panel_height  = SCREEN_HEIGHT;
+      cfg.offset_x = 0;
+      cfg.offset_y = 0;
+      _panel_instance.config(cfg);
+    }
+    _panel_instance.setBus(&_bus_instance);
+    setPanel(&_panel_instance);
+  }
+};
+
+// Declaring the "LGFX" object as "lcd".
+LGFX lcd;
+//---------------------------------------- 
+
+// Library to access the touch screen.
+#include "touch.h"
+
+// Defines the Backlight PIN.
+#define TFT_BL_PIN 2
+
+// Defines the LED PIN.
+#define LED_PIN 38
+
+// Used to track the tick timer.
+uint32_t lastTick = 0;
+
+unsigned long previousMillis_Update_UI = 0;
+const long interval_Update_UI = 5;
+
+// LVGL draw into this buffer, 1/10 screen size usually works well. The size is in bytes.
+#define DRAW_BUF_SIZE ((SCREEN_WIDTH * SCREEN_HEIGHT / 10) * (sizeof(uint16_t)))
+static uint16_t draw_buf[DRAW_BUF_SIZE];
+
+
+
+//________________________________________________________________________________ log_print()
+// If logging is enabled, it will inform the user about what is happening in the library.
+void log_print(lv_log_level_t level, const char * buf) {
+  LV_UNUSED(level);
+  Serial.println(buf);
+  Serial.flush();
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ update_UI()
+// Subroutines to update screen displays or widgets.
+void update_UI() {
+  lv_tick_inc(millis() - lastTick); //--> Update the tick timer. Tick is new for LVGL 9.
+  lastTick = millis();
+  lv_timer_handler(); //--> Update the UI.
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ my_disp_flush()
+void my_disp_flush(lv_display_t *disp, const lv_area_t *area, unsigned char* data) {
+  uint32_t w = (area->x2 - area->x1 + 1);
+  uint32_t h = (area->y2 - area->y1 + 1);
+  lv_draw_sw_rgb565_swap(data, w*h);
+
+  #if (LV_COLOR_16_SWAP != 0)
+    lcd.pushImageDMA(area->x1, area->y1, w, h, (uint16_t*) data);
+  #else
+    lcd.pushImageDMA(area->x1, area->y1, w, h, (uint16_t*) data);
+  #endif
+
+  lv_disp_flush_ready(disp);
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ my_touchpad_read()
+void touchscreen_read(lv_indev_t *indev, lv_indev_data_t *data) {
+  if (touch_has_signal()) {
+    if (touch_touched()) {
+      // Set the coordinates.
+      data->point.x = touch_last_x;
+      data->point.y = touch_last_y;
+      //Serial.print( "Data x " );
+      //Serial.println( data->point.x );
+      //Serial.print( "Data y " );
+      //Serial.println( data->point.y );
+      
+      data->state = LV_INDEV_STATE_PRESSED;
+    } else if (touch_released()) {
+      data->state = LV_INDEV_STATE_RELEASED;
+    }
+  } else {
+    data->state = LV_INDEV_STATE_RELEASED;
+  }
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ switch_led_event_handler()
+// Callback that is triggered when "switch_led" is clicked/toggled.
+static void switch_led_event_handler(lv_event_t * e) {
+  lv_event_code_t code = lv_event_get_code(e);                    //--> Get the event code.
+  lv_obj_t * target_switch = (lv_obj_t*) lv_event_get_target(e);  //--> Switch that generated the event.
+  
+  if (code == LV_EVENT_VALUE_CHANGED) {
+    LV_UNUSED(target_switch);
+
+    bool checked = lv_obj_has_state(target_switch, LV_STATE_CHECKED);
+
+    if (checked == true) {
+      lv_img_set_src(objects.image_bulb, &img_img_light_bulb_on);
+      digitalWrite(LED_PIN, HIGH);
+    } else {
+      lv_img_set_src(objects.image_bulb, &img_img_light_bulb_off);
+      digitalWrite(LED_PIN, LOW);
+    }
+  }
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ image_bulb_event_handler()
+// Callback that is triggered when "image_bulb" is clicked/toggled.
+static void image_bulb_event_handler(lv_event_t * e) {
+  lv_event_code_t code = lv_event_get_code(e);                    //--> Get the event code.
+  
+  if (code == LV_EVENT_CLICKED) {
+    bool switch_led_checked = lv_obj_has_state(objects.switch_led, LV_STATE_CHECKED);
+
+    if (switch_led_checked == true) {
+      lv_img_set_src(objects.image_bulb, &img_img_light_bulb_off);
+      lv_obj_remove_state(objects.switch_led, LV_STATE_CHECKED);
+      digitalWrite(LED_PIN, LOW);
+    } else {
+      lv_img_set_src(objects.image_bulb, &img_img_light_bulb_on);
+      lv_obj_add_state(objects.switch_led, LV_STATE_CHECKED);
+      digitalWrite(LED_PIN, HIGH);
+    }
+  }
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ VOID SETUP()
+void setup() {
+  // put your setup code here, to run once:
+
+  Serial.begin(115200);
+  Serial.println();
+  delay(1000);
+
+  pinMode(TFT_BL_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+
+  digitalWrite(TFT_BL_PIN, HIGH);
+  digitalWrite(LED_PIN, LOW);
+  delay(500);
+
+  // Init Display.
+  Serial.println();
+  Serial.println("LCD Begin.");
+  lcd.begin();
+  lcd.fillScreen(0x000000U);
+  delay(100);
+
+  // Init touch device.
+  Serial.println();
+  Serial.println("Touchscreen Begin.");
+  touch_init();
+  delay(100);
+
+  //----------------------------------------LVGL setup.
+  Serial.println();
+  Serial.println("Start LVGL Setup...");
+  delay(500);
+
+  // Start LVGL.
+  lv_init();
+
+  // Register print function for debugging.
+  lv_log_register_print_cb(log_print);
+
+  // Initialize the display.
+  lv_display_t * disp = lv_display_create(SCREEN_WIDTH, SCREEN_HEIGHT);
+  lv_display_set_buffers(disp, draw_buf, NULL, DRAW_BUF_SIZE, LV_DISPLAY_RENDER_MODE_PARTIAL);
+  lv_display_set_resolution(disp, SCREEN_WIDTH, SCREEN_HEIGHT);
+  lv_display_set_physical_resolution(disp, SCREEN_WIDTH, SCREEN_HEIGHT);
+  lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_0);
+  lv_display_set_flush_cb(disp, my_disp_flush);
+
+  // Initialize the (dummy) input device driver.
+  lv_indev_t * indev = lv_indev_create();
+  lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+  lv_indev_set_read_cb(indev, touchscreen_read);
+
+  Serial.println("LVGL Setup Completed.");
+  delay(500);
+  //----------------------------------------
+
+  //---------------------------------------- Integrate EEZ Studio GUI.
+  ui_init();
+  //---------------------------------------- 
+
+  // Register "switch_led" event handler.
+  lv_obj_add_event_cb(objects.switch_led, switch_led_event_handler, LV_EVENT_VALUE_CHANGED, NULL);
+
+  // Register "image_bulb" event handler.
+  lv_obj_add_event_cb(objects.image_bulb, image_bulb_event_handler, LV_EVENT_ALL, NULL);
+
+  lv_timer_handler();
+  delay(500);
+}
+//________________________________________________________________________________ 
+
+
+
+//________________________________________________________________________________ VOID LOOP()
+void loop() {
+  // put your main code here, to run repeatedly:
+  
+  unsigned long currentMillis_Update_UI = millis();
+  if (currentMillis_Update_UI - previousMillis_Update_UI >= interval_Update_UI) {
+    previousMillis_Update_UI = currentMillis_Update_UI;
+
+    update_UI();
+  }
+}
+//________________________________________________________________________________ 
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

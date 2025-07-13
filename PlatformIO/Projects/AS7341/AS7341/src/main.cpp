@@ -77,7 +77,7 @@ as7341.setAstep(599);
 //Set gain value(0~10 corresponds to X0.5,X1,X2,X4,X8,X16,X32,X64,X128,X256,X512)
 as7341.setAGAIN(7);
 //Enable LED
-as7341.enableLed(false);
+as7341.enableLed(true);//(false);
 //  //Set pin current to control brightness (1~20 corresponds to current 4mA,6mA,8mA,10mA,12mA,......,42mA)
 //  //as7341.controlLed(10);
 }
