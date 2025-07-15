@@ -1,5 +1,6 @@
 {
   "navigation": {
+    "selectedUserPageObject": "[EEZ_GUI_Chart.eez-project]:/userPages/0",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -199,7 +200,8 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -234,8 +236,7 @@
                       "enableClose": false,
                       "icon": "svg:components"
                     }
-                  ],
-                  "active": true
+                  ]
                 }
               ]
             }

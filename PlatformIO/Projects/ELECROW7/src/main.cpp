@@ -4,7 +4,7 @@
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
 #include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
 #include <Adafruit_GFX.h>
-
+#include <Adafruit_BME280.h>
 #include "ui.h"
 #include "images.h"
 
@@ -12,6 +12,14 @@
 // Change to your screen resolution.
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 480
+
+// Global variables for data series to be included in the chart.
+lv_chart_series_t * ser_Temp;
+lv_chart_series_t * ser_Hum;
+// Defines the number of series points on the chart.
+#define number_of_points_series 100
+
+Adafruit_BME280 bme280; // I2C
 
 //LovyanGFX library configuration.
 class LGFX : public lgfx::LGFX_Device
@@ -115,6 +123,51 @@ void log_print(lv_log_level_t level, const char * buf) {
   Serial.flush();
 }
 
+void reset_chart(){
+  // Reset chart.
+  ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
+  ser_Hum = lv_chart_get_series_next(objects.chart_bme280, NULL);
+  for (int i = 0; i < number_of_points_series; i++) {
+    lv_chart_set_next_value(objects.chart_bme280, ser_Temp, 0);
+    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, 0);
+  }
+  lv_chart_refresh(objects.chart_bme280);
+}
+
+void chart_setting(){
+  //---------------------------------------- Chart settings.
+  // Set the chart data display type.
+  // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#chart-type
+  lv_chart_set_type(objects.chart_bme280, LV_CHART_TYPE_LINE);
+
+  // Set the number of points in the series.
+  // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#number-of-points
+  lv_chart_set_point_count(objects.chart_bme280, number_of_points_series);
+
+  // Set the minimum and maximum values ​​in the y direction.
+  // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#vertical-range
+  // LV_CHART_AXIS_PRIMARY_Y, 0, 80); --> 80 is the height of "chart_heartbeat". See in EEZ Studio project.
+  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
+  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_SECONDARY_Y, 0, 100);
+
+  // Set to not display points in data.
+  lv_obj_set_style_size(objects.chart_bme280, 0, 0, LV_PART_INDICATOR);
+
+  // Add or insert series to chart.
+  // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#data-series
+  ser_Temp = lv_chart_add_series(objects.chart_bme280, lv_color_hex(0xffff696a), LV_CHART_AXIS_PRIMARY_Y);
+  ser_Hum = lv_chart_add_series(objects.chart_bme280, lv_color_hex(0xff0000ff), LV_CHART_AXIS_SECONDARY_Y);
+
+  // Set the initial data on the chart.
+  for (int i = 0; i < number_of_points_series; i++) {
+    lv_chart_set_next_value(objects.chart_bme280, ser_Temp, 0);
+    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, 0);
+  }
+
+  // The "lv_chart_refresh(chart_name)" command must be called after the external data source is updated to update the chart.
+  // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#data-series
+  lv_chart_refresh(objects.chart_bme280);
+}
 
 // update_UI()
 // Subroutines to update screen displays or widgets.
@@ -220,6 +273,9 @@ void setup() {
   digitalWrite(LED_PIN, LOW);
   delay(500);
 
+  Wire.begin(19, 20);
+  bme280.begin(0x76); // I2C address 0x76
+
   // Init Display.
   Serial.println();
   Serial.println("LCD Begin.");
@@ -261,6 +317,10 @@ void setup() {
   delay(500);
   //----------------------------------------
 
+  // chart init
+  chart_setting();
+  reset_chart();
+
   //---------------------------------------- Integrate EEZ Studio GUI.
   ui_init();
   //---------------------------------------- 
@@ -283,6 +343,14 @@ void loop() {
   unsigned long currentMillis_Update_UI = millis();
   if (currentMillis_Update_UI - previousMillis_Update_UI >= interval_Update_UI) {
     previousMillis_Update_UI = currentMillis_Update_UI;
+
+    // Add new signal data to the chart.
+    ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
+    ser_Hum = lv_chart_get_series_next(objects.chart_bme280, NULL);
+    lv_chart_set_next_value(objects.chart_bme280, ser_Temp, bme280.readTemperature());  
+    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, bme280.readHumidity());  
+    lv_chart_refresh(objects.chart_bme280);
+    /////////////////////////////
 
     update_UI();
   }

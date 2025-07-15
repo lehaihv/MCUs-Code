@@ -80,6 +80,13 @@ void create_screen_main() {
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_label_set_text(obj, "0");
         }
+        {
+            // chart_bme280
+            lv_obj_t *obj = lv_chart_create(parent_obj);
+            objects.chart_bme280 = obj;
+            lv_obj_set_pos(obj, 488, 96);
+            lv_obj_set_size(obj, 299, 243);
+        }
     }
     
     tick_screen_main();

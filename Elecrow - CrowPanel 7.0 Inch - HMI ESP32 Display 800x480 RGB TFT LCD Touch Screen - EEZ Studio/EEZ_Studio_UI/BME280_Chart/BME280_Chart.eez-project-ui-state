@@ -200,7 +200,8 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -210,7 +211,7 @@
                 {
                   "type": "tabset",
                   "id": "#28af46fb-c364-4471-b9fe-147350cc753b",
-                  "weight": 2,
+                  "weight": 1.2931633835457705,
                   "children": [
                     {
                       "type": "tab",
@@ -220,13 +221,12 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
                   "id": "#50abb123-38f1-4b03-bb22-d1101993a50a",
-                  "weight": 1,
+                  "weight": 1.7068366164542295,
                   "children": [
                     {
                       "type": "tab",
@@ -968,11 +968,7 @@
   "objects": {
     "[BME280_Chart.eez-project]:/userPages/0[flow-state]": {
       "selection": {
-        "0": {
-          "0": {
-            "$selected": true
-          }
-        }
+        "0": {}
       },
       "transform": {
         "translate": {

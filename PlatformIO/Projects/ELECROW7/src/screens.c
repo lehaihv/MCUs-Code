@@ -35,18 +35,18 @@ void create_screen_main() {
             // label_header
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.label_header = obj;
-            lv_obj_set_pos(obj, 166, 6);
+            lv_obj_set_pos(obj, 88, 6);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-            lv_obj_set_style_text_color(obj, lv_color_hex(0xfff5f0f0), LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_font(obj, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_label_set_text(obj, "CrowPanel 7.0 Inch\nHMI ESP32 Display 800x480 RGB TFT LCD");
+            lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "CrowPanel 7.0 Inch\nHMI ESP32 Display 800x480 RGB TFT LCD Touch Screen");
         }
         {
             // image_bulb
             lv_obj_t *obj = lv_image_create(parent_obj);
             objects.image_bulb = obj;
-            lv_obj_set_pos(obj, 361, 176);
+            lv_obj_set_pos(obj, 362, 96);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_image_set_src(obj, &img_img_light_bulb_off);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
@@ -55,12 +55,37 @@ void create_screen_main() {
             // switch_led
             lv_obj_t *obj = lv_switch_create(parent_obj);
             objects.switch_led = obj;
-            lv_obj_set_pos(obj, 340, 355);
-            lv_obj_set_size(obj, 120, 45);
+            lv_obj_set_pos(obj, 346, 240);
+            lv_obj_set_size(obj, 111, 39);
             lv_obj_set_style_pad_top(obj, -8, LV_PART_KNOB | LV_STATE_DEFAULT);
             lv_obj_set_style_pad_bottom(obj, -8, LV_PART_KNOB | LV_STATE_DEFAULT);
             lv_obj_set_style_pad_left(obj, -8, LV_PART_KNOB | LV_STATE_DEFAULT);
             lv_obj_set_style_pad_right(obj, -8, LV_PART_KNOB | LV_STATE_DEFAULT);
+        }
+        {
+            // slider_PWM
+            lv_obj_t *obj = lv_slider_create(parent_obj);
+            objects.slider_pwm = obj;
+            lv_obj_set_pos(obj, 152, 407);
+            lv_obj_set_size(obj, 500, 30);
+            lv_slider_set_range(obj, 0, 255);
+        }
+        {
+            // slider_value
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.slider_value = obj;
+            lv_obj_set_pos(obj, 352, 339);
+            lv_obj_set_size(obj, 99, 37);
+            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "0");
+        }
+        {
+            // chart_bme280
+            lv_obj_t *obj = lv_chart_create(parent_obj);
+            objects.chart_bme280 = obj;
+            lv_obj_set_pos(obj, 488, 96);
+            lv_obj_set_size(obj, 299, 243);
         }
     }
     
