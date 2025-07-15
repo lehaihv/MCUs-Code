@@ -94,6 +94,7 @@ void setup()
   digitalWrite(38, LOW);
 
   Wire.begin(19, 20);
+  bme280.begin(0x76); // I2C address 0x76
 
   /* Out.reset();
   Out.setMode(IO_OUTPUT);  //Set to output mode
