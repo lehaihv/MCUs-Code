@@ -18,6 +18,10 @@
 lv_chart_series_t * ser_Temp;
 lv_chart_series_t * ser_Hum;
 int32_t * ser_Hum_y_points;
+lv_obj_t * chart_bme_ref = NULL;
+lv_chart_series_t * ser_Temp_ref = NULL;
+lv_chart_series_t * ser_Hum_ref = NULL;
+
 
 
 // Defines the number of series points on the chart.
@@ -159,7 +163,7 @@ void chart_setting(){
   // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#vertical-range
   // LV_CHART_AXIS_PRIMARY_Y, 0, 80); --> 80 is the height of "chart_heartbeat". See in EEZ Studio project.
   lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_PRIMARY_Y, 0, 260);
-  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_SECONDARY_Y, 0, 100);
+  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_SECONDARY_Y, 0, 260);
 
   lv_obj_set_style_pad_right(objects.chart_bme280, 20, 0);
   lv_obj_set_style_size(objects.chart_bme280, 6, 0, LV_PART_INDICATOR); // dots visible
@@ -196,6 +200,75 @@ void chart_setting(){
   // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#data-series
   lv_chart_refresh(objects.chart_bme280);
 }
+
+void add_axis_labels(void) {
+    lv_obj_t * chart = chart_bme_ref;
+    lv_chart_series_t * ser_Temp = ser_Temp_ref;
+    lv_chart_series_t * ser_Hum = ser_Hum_ref;
+    if (!chart || !ser_Temp || !ser_Hum) return;
+
+    lv_obj_t * parent = lv_obj_get_parent(chart);
+
+    // Get the chart's inner drawing area (where data is plotted)
+    lv_area_t content_area;
+    lv_obj_get_content_coords(chart, &content_area);
+
+    // Get the chart's absolute coordinates (position relative to parent)
+    lv_area_t chart_coords;
+    lv_obj_get_coords(chart, &chart_coords);
+    lv_point_t chart_abs_pos = { chart_coords.x1, chart_coords.y1 };
+
+    lv_coord_t chart_x = content_area.x1;
+    lv_coord_t chart_y = content_area.y1;
+    lv_coord_t chart_w = lv_area_get_width(&content_area);
+    lv_coord_t chart_h = lv_area_get_height(&content_area);
+
+    // ----- Y axis labels (left and right) -----
+    const int y_min = 0;
+    const int y_max = 260;
+    const int num_y_labels = 5;
+
+    for (int i = 0; i < num_y_labels; i++) {
+        int val = y_min + i * (y_max - y_min) / (num_y_labels - 1);
+        int y_pos = chart_y + chart_h - (val - y_min) * chart_h / (y_max - y_min);
+
+        // Left Y axis label
+        lv_obj_t * label_left = lv_label_create(parent);
+        lv_label_set_text_fmt(label_left, "%d", val);
+        lv_obj_set_style_text_align(label_left, LV_TEXT_ALIGN_RIGHT, 0);
+        lv_obj_set_pos(label_left, chart_x - 35, y_pos - 8);
+
+        // Right Y axis label
+        lv_obj_t * label_right = lv_label_create(parent);
+        lv_label_set_text_fmt(label_right, "%d", val);
+        lv_obj_set_pos(label_right, chart_x + chart_w + 10, y_pos - 8);
+    }
+
+    // ----- X axis labels -----
+    uint16_t point_count = lv_chart_get_point_count(chart);
+    uint8_t num_x_labels = 5;
+
+    for (uint8_t i = 0; i < num_x_labels; i++) {
+        // Calculate the index for labeling
+        uint16_t point_index = i * (point_count - 1) / (num_x_labels - 1);
+
+        // Get point position relative to chart top-left
+        lv_point_t pt;
+        lv_chart_get_point_pos_by_id(chart, ser_Temp, point_index, &pt);
+
+        // Convert to absolute position relative to chart parent
+        int abs_x = chart_abs_pos.x + pt.x;
+
+        // Create label for X axis
+        lv_obj_t * label = lv_label_create(parent);
+        lv_label_set_text_fmt(label, "%d", point_index); // Replace with your X-axis value as needed
+        lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+
+        // Position label below chart
+        lv_obj_set_pos(label, abs_x - 10, content_area.y2 + 5);
+    }
+}
+
 
 // update_UI()
 // Subroutines to update screen displays or widgets.
@@ -372,10 +445,6 @@ void setup() {
   delay(500);
   //----------------------------------------
 
-  // chart init
-  //chart_setting();
-  //reset_chart();
-
   //---------------------------------------- Integrate EEZ Studio GUI.
   ui_init();
   //---------------------------------------- 
@@ -394,6 +463,16 @@ void setup() {
   // chart init
   chart_setting();
   reset_chart();
+  chart_bme_ref = objects.chart_bme280;
+  ser_Temp_ref = ser_Temp;
+  ser_Hum_ref = ser_Hum;
+
+  lv_timer_create([](lv_timer_t * t) {
+      lv_obj_update_layout(chart_bme_ref);  // Ensure layout is updated
+      add_axis_labels();
+      lv_timer_del(t);  // Run once only
+  }, 100, NULL);
+
   //ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
   //ser_Hum = lv_chart_get_series_next(objects.chart_bme280, ser_Temp);
 
@@ -439,10 +518,10 @@ void loop() {
     previousMillis_Update_UI = currentMillis_Update_UI;
 
     // Add new signal data to the chart.
-    //ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
-    //ser_Hum = lv_chart_get_series_next(objects.chart_bme280, NULL);
+    ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
+    ser_Hum = lv_chart_get_series_next(objects.chart_bme280, ser_Temp);
     lv_chart_set_next_value(objects.chart_bme280, ser_Temp, pwm_value); //bme280.readTemperature());  
-    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, (bme280.readPressure()/10000));  
+    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, pwm_value/3); //(bme280.readPressure()/10000));  
 
     /*Set the next points on 'ser1'*/
     //lv_chart_set_next_value(objects.chart_bme280, ser_Temp, lv_rand(30, 50));
