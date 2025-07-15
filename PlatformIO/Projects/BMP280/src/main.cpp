@@ -11,8 +11,8 @@
 #include <Fonts/Picopixel.h>
 #include <Fonts/TomThumb.h>
 #include <Fonts/Org_01.h>
-#include <Fonts/FreeSerifBold6pt7b.h>
-#include <Fonts/FreeSerifBold4pt7b.h>
+//#include <Fonts/FreeSerifBold6pt7b.h>
+//#include <Fonts/FreeSerifBold4pt7b.h>
 
 #define BMP_SCK  (13)
 #define BMP_MISO (12)

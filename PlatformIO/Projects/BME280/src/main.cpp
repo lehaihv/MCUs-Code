@@ -60,7 +60,7 @@ void setup() {
     unsigned status;
     
     // default settings
-    status = bme.begin(0x76, &I2C_BME280);  
+    status = bme.begin(0x58, &I2C_BME280);//(0x76, &I2C_BME280);  
     // You can also pass in a Wire library object like &Wire2
     // status = bme.begin(0x76, &Wire2)
     if (!status) {

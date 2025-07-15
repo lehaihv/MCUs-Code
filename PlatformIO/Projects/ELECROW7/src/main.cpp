@@ -4,7 +4,8 @@
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
 #include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
 #include <Adafruit_GFX.h>
-#include <Adafruit_BME280.h>
+//#include <Adafruit_BME280.h>
+#include <Adafruit_BMP280.h>
 #include "ui.h"
 #include "images.h"
 
@@ -16,10 +17,19 @@
 // Global variables for data series to be included in the chart.
 lv_chart_series_t * ser_Temp;
 lv_chart_series_t * ser_Hum;
+int32_t * ser_Hum_y_points;
+
+
 // Defines the number of series points on the chart.
 #define number_of_points_series 100
 
-Adafruit_BME280 bme280; // I2C
+// define pin for I2C module 1 ---> ADS1115
+#define I2C_0_SDA 19
+#define I2C_0_SCL 20
+
+TwoWire I2C_BMP280 = TwoWire(0);  // "0", "1" instance of I2C module bus
+
+Adafruit_BMP280 bme280(&I2C_BMP280); // I2C
 
 //LovyanGFX library configuration.
 class LGFX : public lgfx::LGFX_Device
@@ -105,9 +115,10 @@ LGFX lcd;
 
 // Used to track the tick timer.
 uint32_t lastTick = 0;
+uint8_t pwm_value = 0;
 
 unsigned long previousMillis_Update_UI = 0;
-const long interval_Update_UI = 5;
+const long interval_Update_UI = 50;
 
 // LVGL draw into this buffer, 1/10 screen size usually works well. The size is in bytes.
 #define DRAW_BUF_SIZE ((SCREEN_WIDTH * SCREEN_HEIGHT / 10) * (sizeof(uint16_t)))
@@ -126,7 +137,7 @@ void log_print(lv_log_level_t level, const char * buf) {
 void reset_chart(){
   // Reset chart.
   ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
-  ser_Hum = lv_chart_get_series_next(objects.chart_bme280, NULL);
+  ser_Hum = lv_chart_get_series_next(objects.chart_bme280, ser_Temp);
   for (int i = 0; i < number_of_points_series; i++) {
     lv_chart_set_next_value(objects.chart_bme280, ser_Temp, 0);
     lv_chart_set_next_value(objects.chart_bme280, ser_Hum, 0);
@@ -147,16 +158,33 @@ void chart_setting(){
   // Set the minimum and maximum values ​​in the y direction.
   // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#vertical-range
   // LV_CHART_AXIS_PRIMARY_Y, 0, 80); --> 80 is the height of "chart_heartbeat". See in EEZ Studio project.
-  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
+  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_PRIMARY_Y, 0, 260);
   lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_SECONDARY_Y, 0, 100);
+
+  lv_obj_set_style_pad_right(objects.chart_bme280, 20, 0);
+  lv_obj_set_style_size(objects.chart_bme280, 6, 0, LV_PART_INDICATOR); // dots visible
+
+
+  // Show horizontal and vertical grid lines
+  lv_chart_set_div_line_count(objects.chart_bme280, 5, 10);
+  lv_obj_set_style_line_opa(objects.chart_bme280, LV_OPA_40, LV_PART_ITEMS);
+  lv_obj_set_style_line_width(objects.chart_bme280, 1, LV_PART_ITEMS);
+
+  // (Optional) Customize series indicator lines
+  lv_obj_set_style_line_opa(objects.chart_bme280, LV_OPA_COVER, LV_PART_INDICATOR);
+  lv_obj_set_style_line_width(objects.chart_bme280, 2, LV_PART_INDICATOR);
+
+  // Enable drawing of secondary Y-axis grid lines using items part
+  lv_obj_set_style_opa(objects.chart_bme280, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_DEFAULT);  
 
   // Set to not display points in data.
   lv_obj_set_style_size(objects.chart_bme280, 0, 0, LV_PART_INDICATOR);
 
   // Add or insert series to chart.
   // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#data-series
-  ser_Temp = lv_chart_add_series(objects.chart_bme280, lv_color_hex(0xffff696a), LV_CHART_AXIS_PRIMARY_Y);
-  ser_Hum = lv_chart_add_series(objects.chart_bme280, lv_color_hex(0xff0000ff), LV_CHART_AXIS_SECONDARY_Y);
+  ser_Temp = lv_chart_add_series(objects.chart_bme280, lv_palette_main(LV_PALETTE_RED), LV_CHART_AXIS_PRIMARY_Y);
+  ser_Hum = lv_chart_add_series(objects.chart_bme280, lv_palette_main(LV_PALETTE_GREEN), LV_CHART_AXIS_SECONDARY_Y);
+  //ser_Hum_y_points = lv_chart_get_y_array(objects.chart_bme280, ser_Hum);
 
   // Set the initial data on the chart.
   for (int i = 0; i < number_of_points_series; i++) {
@@ -257,6 +285,32 @@ static void image_bulb_event_handler(lv_event_t * e) {
   }
 }
 
+// slider_PWM_event_handler()
+// Callback that is triggered when "slider_PWM" value change.
+static void slider_PWM_event_handler(lv_event_t *e)
+{
+  lv_event_code_t code = lv_event_get_code(e); //--> Get the event code.
+  if (code == LV_EVENT_VALUE_CHANGED)
+  {
+    lv_obj_t *target_slider = (lv_obj_t *)lv_event_get_target(e); //--> Slider that generated the event.
+    int16_t value = lv_slider_get_value(target_slider);           //--> Get the slider value.
+    // int16_t value = lv_slider_get_value(objects.slider_pwm);
+
+    // Map the slider value to PWM range (0-255).
+    pwm_value = value; //(value, 0, 100, 0, 255);
+
+    // Set the LED brightness using PWM.
+    //ledcWrite(LED_PIN, pwm_value);
+    analogWrite(LED_PIN, pwm_value);
+    // Update the label with the current slider value.
+    lv_label_set_text_fmt(objects.slider_value, "%d", value);
+
+    Serial.print("Slider Value: ");
+    Serial.println(value);
+    Serial.print("PWM Value: ");
+    Serial.println(pwm_value);
+  }
+}
 
 // VOID SETUP()
 void setup() {
@@ -273,8 +327,9 @@ void setup() {
   digitalWrite(LED_PIN, LOW);
   delay(500);
 
-  Wire.begin(19, 20);
-  bme280.begin(0x76); // I2C address 0x76
+  //Wire.begin(19, 20);
+  I2C_BMP280.begin(I2C_0_SDA, I2C_0_SCL);
+  bme280.begin(0x58); // I2C address 0x76
 
   // Init Display.
   Serial.println();
@@ -318,8 +373,8 @@ void setup() {
   //----------------------------------------
 
   // chart init
-  chart_setting();
-  reset_chart();
+  //chart_setting();
+  //reset_chart();
 
   //---------------------------------------- Integrate EEZ Studio GUI.
   ui_init();
@@ -331,8 +386,47 @@ void setup() {
   // Register "image_bulb" event handler.
   lv_obj_add_event_cb(objects.image_bulb, image_bulb_event_handler, LV_EVENT_ALL, NULL);
 
+  // Register "slider_PWM" event handler.
+  lv_obj_add_event_cb(objects.slider_pwm, slider_PWM_event_handler, LV_EVENT_VALUE_CHANGED, NULL);
+
   lv_timer_handler();
   delay(500);
+  // chart init
+  chart_setting();
+  reset_chart();
+  //ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
+  //ser_Hum = lv_chart_get_series_next(objects.chart_bme280, ser_Temp);
+
+ /*  Serial.println(F("BMP280 test"));
+  unsigned status;
+  status = bme280.begin(0X76, 0X58);
+  //status = bmp.begin();
+  if (!status) {
+    Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
+                      "try a different address!"));
+    Serial.print("SensorID was: 0x"); Serial.println(bme280.sensorID(),16);
+    Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+    Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
+    Serial.print("        ID of 0x60 represents a BME 280.\n");
+    Serial.print("        ID of 0x61 represents a BME 680.\n");
+    while (1) delay(10);
+  }
+
+  /* Default settings from datasheet. */
+  
+  /*Serial.print(F("Temperature = "));
+  Serial.print(bme280.readTemperature());
+  Serial.println(" *C");
+
+  Serial.print(F("Pressure = "));
+  Serial.print(bme280.readPressure());
+  Serial.println(" Pa");
+
+  Serial.print(F("Approx altitude = "));
+  Serial.print(bme280.readAltitude(1013.25)); /* Adjusted to local forecast! */
+  /*Serial.println(" m");
+
+  Serial.println(); */
 }
 
 
@@ -345,14 +439,36 @@ void loop() {
     previousMillis_Update_UI = currentMillis_Update_UI;
 
     // Add new signal data to the chart.
-    ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
-    ser_Hum = lv_chart_get_series_next(objects.chart_bme280, NULL);
-    lv_chart_set_next_value(objects.chart_bme280, ser_Temp, bme280.readTemperature());  
-    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, bme280.readHumidity());  
-    lv_chart_refresh(objects.chart_bme280);
+    //ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
+    //ser_Hum = lv_chart_get_series_next(objects.chart_bme280, NULL);
+    lv_chart_set_next_value(objects.chart_bme280, ser_Temp, pwm_value); //bme280.readTemperature());  
+    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, (bme280.readPressure()/10000));  
+
+    /*Set the next points on 'ser1'*/
+    //lv_chart_set_next_value(objects.chart_bme280, ser_Temp, lv_rand(30, 50));
+    //lv_chart_set_next_value(objects.chart_bme280, ser_Hum, lv_rand(70, 90));
+
+    /*Directly set points on 'ser2'*/
+
+    //ser_Hum_y_points[i++] = lv_rand(50, 90);
+
+    //lv_chart_refresh(objects.chart_bme280);
     /////////////////////////////
 
     update_UI();
+    /* Serial.print(F("Temperature = "));
+    Serial.print(bme280.readTemperature());
+    Serial.println(" *C");
+
+    Serial.print(F("Pressure = "));
+    Serial.print(bme280.readPressure());
+    Serial.println(" Pa");
+
+    Serial.print(F("Approx altitude = "));
+    Serial.print(bme280.readAltitude(1013.25)); /* Adjusted to local forecast! */
+    /*Serial.println(" m");
+
+    Serial.println(); */
   }
 }
 
