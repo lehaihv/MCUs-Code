@@ -4,8 +4,8 @@
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
 #include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
 #include <Adafruit_GFX.h>
-//#include <Adafruit_BME280.h>
-#include <Adafruit_BMP280.h>
+#include <Adafruit_BME280.h>
+//#include <Adafruit_BMP280.h>
 #include "ui.h"
 #include "images.h"
 
@@ -33,7 +33,7 @@ lv_chart_series_t * ser_Hum_ref = NULL;
 
 TwoWire I2C_BMP280 = TwoWire(0);  // "0", "1" instance of I2C module bus
 
-Adafruit_BMP280 bme280(&I2C_BMP280); // I2C
+Adafruit_BME280 bme280; // I2C
 
 //LovyanGFX library configuration.
 class LGFX : public lgfx::LGFX_Device
@@ -122,12 +122,15 @@ uint32_t lastTick = 0;
 uint8_t pwm_value = 0;
 
 unsigned long previousMillis_Update_UI = 0;
-const long interval_Update_UI = 50;
+const long interval_Update_UI = 500;
 
 // LVGL draw into this buffer, 1/10 screen size usually works well. The size is in bytes.
 #define DRAW_BUF_SIZE ((SCREEN_WIDTH * SCREEN_HEIGHT / 10) * (sizeof(uint16_t)))
 static uint16_t draw_buf[DRAW_BUF_SIZE];
 
+// Add global axis range variables for chart Y axes
+int y_min_left = 0, y_max_left = 40;
+int y_min_right = 0, y_max_right = 100;
 
 
 // log_print()
@@ -162,15 +165,17 @@ void chart_setting(){
   // Set the minimum and maximum values ​​in the y direction.
   // For more details see here: https://docs.lvgl.io/9.2/widgets/chart.html#vertical-range
   // LV_CHART_AXIS_PRIMARY_Y, 0, 80); --> 80 is the height of "chart_heartbeat". See in EEZ Studio project.
-  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_PRIMARY_Y, 0, 260);
-  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_SECONDARY_Y, 0, 260);
+  //y_min_left = 0; y_max_left = 40;
+  //y_min_right = 0; y_max_right = 100;
+  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_PRIMARY_Y, y_min_left, y_max_left);
+  lv_chart_set_range(objects.chart_bme280, LV_CHART_AXIS_SECONDARY_Y, y_min_right, y_max_right);
 
   lv_obj_set_style_pad_right(objects.chart_bme280, 20, 0);
   lv_obj_set_style_size(objects.chart_bme280, 6, 0, LV_PART_INDICATOR); // dots visible
 
 
   // Show horizontal and vertical grid lines
-  lv_chart_set_div_line_count(objects.chart_bme280, 5, 10);
+  lv_chart_set_div_line_count(objects.chart_bme280, 10, 10);
   lv_obj_set_style_line_opa(objects.chart_bme280, LV_OPA_40, LV_PART_ITEMS);
   lv_obj_set_style_line_width(objects.chart_bme280, 1, LV_PART_ITEMS);
 
@@ -224,47 +229,41 @@ void add_axis_labels(void) {
     lv_coord_t chart_h = lv_area_get_height(&content_area);
 
     // ----- Y axis labels (left and right) -----
-    const int y_min = 0;
-    const int y_max = 260;
+    // Get the actual ranges from the chart
+    // Use y_min_left, y_max_left, y_min_right, y_max_right directly
     const int num_y_labels = 5;
 
     for (int i = 0; i < num_y_labels; i++) {
-        int val = y_min + i * (y_max - y_min) / (num_y_labels - 1);
-        int y_pos = chart_y + chart_h - (val - y_min) * chart_h / (y_max - y_min);
+        // Left Y axis (primary)
+        int val_left = y_min_left + i * (y_max_left - y_min_left) / (num_y_labels - 1);
+        int y_pos_left = chart_y + chart_h - (val_left - y_min_left) * chart_h / (y_max_left - y_min_left);
 
-        // Left Y axis label
         lv_obj_t * label_left = lv_label_create(parent);
-        lv_label_set_text_fmt(label_left, "%d", val);
+        lv_label_set_text_fmt(label_left, "%d", val_left);
         lv_obj_set_style_text_align(label_left, LV_TEXT_ALIGN_RIGHT, 0);
-        lv_obj_set_pos(label_left, chart_x - 35, y_pos - 8);
+        lv_obj_set_pos(label_left, chart_x - 35, y_pos_left - 8);
 
-        // Right Y axis label
+        // Right Y axis (secondary)
+        int val_right = y_min_right + i * (y_max_right - y_min_right) / (num_y_labels - 1);
+        int y_pos_right = chart_y + chart_h - (val_right - y_min_right) * chart_h / (y_max_right - y_min_right);
+
         lv_obj_t * label_right = lv_label_create(parent);
-        lv_label_set_text_fmt(label_right, "%d", val);
-        lv_obj_set_pos(label_right, chart_x + chart_w + 10, y_pos - 8);
+        lv_label_set_text_fmt(label_right, "%d", val_right);
+        lv_obj_set_pos(label_right, chart_x + chart_w + 10, y_pos_right - 8);
     }
 
-    // ----- X axis labels -----
+    // ----- X axis labels (unchanged) -----
     uint16_t point_count = lv_chart_get_point_count(chart);
     uint8_t num_x_labels = 5;
 
     for (uint8_t i = 0; i < num_x_labels; i++) {
-        // Calculate the index for labeling
         uint16_t point_index = i * (point_count - 1) / (num_x_labels - 1);
-
-        // Get point position relative to chart top-left
         lv_point_t pt;
         lv_chart_get_point_pos_by_id(chart, ser_Temp, point_index, &pt);
-
-        // Convert to absolute position relative to chart parent
         int abs_x = chart_abs_pos.x + pt.x;
-
-        // Create label for X axis
         lv_obj_t * label = lv_label_create(parent);
-        lv_label_set_text_fmt(label, "%d", point_index); // Replace with your X-axis value as needed
+        lv_label_set_text_fmt(label, "%d", point_index);
         lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
-
-        // Position label below chart
         lv_obj_set_pos(label, abs_x - 10, content_area.y2 + 5);
     }
 }
@@ -402,7 +401,7 @@ void setup() {
 
   //Wire.begin(19, 20);
   I2C_BMP280.begin(I2C_0_SDA, I2C_0_SCL);
-  bme280.begin(0x58); // I2C address 0x76
+  bme280.begin(0x76); // I2C address 0x76
 
   // Init Display.
   Serial.println();
@@ -476,9 +475,9 @@ void setup() {
   //ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
   //ser_Hum = lv_chart_get_series_next(objects.chart_bme280, ser_Temp);
 
- /*  Serial.println(F("BMP280 test"));
+  Serial.println(F("BMP280 test"));
   unsigned status;
-  status = bme280.begin(0X76, 0X58);
+  status = bme280.begin(0x76);
   //status = bmp.begin();
   if (!status) {
     Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
@@ -493,7 +492,7 @@ void setup() {
 
   /* Default settings from datasheet. */
   
-  /*Serial.print(F("Temperature = "));
+  Serial.print(F("Temperature = "));
   Serial.print(bme280.readTemperature());
   Serial.println(" *C");
 
@@ -503,9 +502,9 @@ void setup() {
 
   Serial.print(F("Approx altitude = "));
   Serial.print(bme280.readAltitude(1013.25)); /* Adjusted to local forecast! */
-  /*Serial.println(" m");
+  Serial.println(" m");
 
-  Serial.println(); */
+  Serial.println();
 }
 
 
@@ -520,8 +519,8 @@ void loop() {
     // Add new signal data to the chart.
     ser_Temp = lv_chart_get_series_next(objects.chart_bme280, NULL);
     ser_Hum = lv_chart_get_series_next(objects.chart_bme280, ser_Temp);
-    lv_chart_set_next_value(objects.chart_bme280, ser_Temp, pwm_value); //bme280.readTemperature());  
-    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, pwm_value/3); //(bme280.readPressure()/10000));  
+    lv_chart_set_next_value(objects.chart_bme280, ser_Temp, bme280.readTemperature());  
+    lv_chart_set_next_value(objects.chart_bme280, ser_Hum, bme280.readHumidity());  
 
     /*Set the next points on 'ser1'*/
     //lv_chart_set_next_value(objects.chart_bme280, ser_Temp, lv_rand(30, 50));
@@ -535,7 +534,7 @@ void loop() {
     /////////////////////////////
 
     update_UI();
-    /* Serial.print(F("Temperature = "));
+    Serial.print(F("Temperature = "));
     Serial.print(bme280.readTemperature());
     Serial.println(" *C");
 
@@ -545,9 +544,13 @@ void loop() {
 
     Serial.print(F("Approx altitude = "));
     Serial.print(bme280.readAltitude(1013.25)); /* Adjusted to local forecast! */
-    /*Serial.println(" m");
+    Serial.println(" m");
 
-    Serial.println(); */
+    Serial.print("Humidity = ");
+    Serial.print(bme280.readHumidity());
+    Serial.println(" %");
+
+    Serial.println(); 
   }
 }
 

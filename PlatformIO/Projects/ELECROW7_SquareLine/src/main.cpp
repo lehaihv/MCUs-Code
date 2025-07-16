@@ -4,7 +4,7 @@
 //#include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
 //#include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
 #include <SPI.h>
-#include <Wire.h>
+//#include <Wire.h>
 //#include <Adafruit_GFX.h>
 //#include <demos/lv_demos.h>
 //#include <examples/lv_examples.h>
@@ -121,7 +121,7 @@ void my_timer(lv_timer_t * timer)
 }
 
 
-PCA9557 Out;
+//PCA9557 Out;
 void setup()
 {
   
@@ -129,17 +129,17 @@ void setup()
   
 
   //IO
-  pinMode(38, OUTPUT);
-  digitalWrite(38, LOW);
+  //pinMode(38, OUTPUT);
+  //digitalWrite(38, LOW);
   
 
 
   
-  Wire.begin(19, 20);
+  //Wire.begin(19, 20);
   
   // Initialize PCA9557 - no begin() method needed, just Wire.begin() above
   
-  // Set all pins as outputs initially
+  /* // Set all pins as outputs initially
   Out.pinMode(IO0, OUTPUT);
   Out.pinMode(IO1, OUTPUT);
   Out.pinMode(IO2, OUTPUT);
@@ -159,7 +159,7 @@ void setup()
   delay(100);
   
   // Set IO1 as input
-  Out.pinMode(IO1, INPUT);
+  Out.pinMode(IO1, INPUT); */
   
   //dht20.begin();
 
