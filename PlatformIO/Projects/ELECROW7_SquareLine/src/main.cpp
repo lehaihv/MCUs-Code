@@ -98,18 +98,25 @@ void my_timer(lv_timer_t * timer)
 {
     char *tem       = (char *)malloc(24);
     char *hum       = (char *)malloc(24);
+    char buff[16];
 
-      //Get ambient temperature
-      sprintf(tem, "Temperature: %.2f C ", tem_float = 20.0);
-      //Serial.print(tem);
-      lv_label_set_text(ui_Labeltemp, tem);
-      //Get relative humidity
-      sprintf(hum, "Humidity: %.2f %RH", hum_float = 50.0);
-      //Serial.println(hum);
-      lv_label_set_text(ui_Labelhum, hum);
+    //Get ambient temperature
+    sprintf(tem, "Temperature: %.2f C ", tem_float = 20.0);
+    //Serial.print(tem);
+    lv_label_set_text(ui_Labeltemp, tem);
+    //Get relative humidity
+    //sprintf(hum, "Humidity: %.2f %RH", hum_float = 50.0);
+    //Serial.println(hum);
+    //lv_label_set_text(ui_Labelhum, hum);
 
     lv_chart_set_next_value(ui_Chart1, ui_Chart1_series_1, tem_float);
-    lv_chart_set_next_value(ui_Chart1, ui_Chart1_series_2, hum_float);
+    //lv_chart_set_next_value(ui_Chart1, ui_Chart1_series_2, hum_float);
+    if (slider_change_value) {
+      sprintf(buff, "%.2f", lv_slider_get_value(ui_Slider1));
+      lv_label_set_text(ui_Labelhum, buff);
+      lv_chart_set_next_value(ui_Chart1, ui_Chart1_series_2, lv_slider_get_value(ui_Slider1));
+      slider_change_value = 0;
+    }
     lv_chart_refresh(ui_Chart1);
 }
 
@@ -118,7 +125,7 @@ PCA9557 Out;
 void setup()
 {
   
-  Serial.begin(9600);
+  Serial.begin(115200);
   
 
   //IO

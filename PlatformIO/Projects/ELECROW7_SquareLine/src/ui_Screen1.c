@@ -9,9 +9,18 @@ lv_obj_t * ui_Screen1 = NULL;
 lv_obj_t * ui_Chart1 = NULL;
 lv_obj_t * ui_Labeltemp = NULL;
 lv_obj_t * ui_Labelhum = NULL;
+lv_obj_t * ui_Slider1 = NULL;
 lv_chart_series_t * ui_Chart1_series_1 = NULL;
 lv_chart_series_t * ui_Chart1_series_2 = NULL;
 // event funtions
+void ui_event_Slider1(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        slider_change(e);
+    }
+}
 
 // build funtions
 
@@ -46,8 +55,8 @@ void ui_Screen1_screen_init(void)
     ui_Labeltemp = lv_label_create(ui_Screen1);
     lv_obj_set_width(ui_Labeltemp, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Labeltemp, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Labeltemp, -216);
-    lv_obj_set_y(ui_Labeltemp, -190);
+    lv_obj_set_x(ui_Labeltemp, -270);
+    lv_obj_set_y(ui_Labeltemp, -170);
     lv_obj_set_align(ui_Labeltemp, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Labeltemp, "Temperature:");
     lv_obj_set_style_text_color(ui_Labeltemp, lv_color_hex(0xF90404), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -57,13 +66,24 @@ void ui_Screen1_screen_init(void)
     ui_Labelhum = lv_label_create(ui_Screen1);
     lv_obj_set_width(ui_Labelhum, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Labelhum, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Labelhum, 174);
-    lv_obj_set_y(ui_Labelhum, -190);
+    lv_obj_set_x(ui_Labelhum, 247);
+    lv_obj_set_y(ui_Labelhum, -170);
     lv_obj_set_align(ui_Labelhum, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Labelhum, "Humidity:");
     lv_obj_set_style_text_color(ui_Labelhum, lv_color_hex(0x042CF9), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Labelhum, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Labelhum, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Slider1 = lv_slider_create(ui_Screen1);
+    lv_slider_set_value(ui_Slider1, 0, LV_ANIM_OFF);
+    if(lv_slider_get_mode(ui_Slider1) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_Slider1, 0, LV_ANIM_OFF);
+    lv_obj_set_width(ui_Slider1, 614);
+    lv_obj_set_height(ui_Slider1, 19);
+    lv_obj_set_x(ui_Slider1, -9);
+    lv_obj_set_y(ui_Slider1, -211);
+    lv_obj_set_align(ui_Slider1, LV_ALIGN_CENTER);
+
+    lv_obj_add_event_cb(ui_Slider1, ui_event_Slider1, LV_EVENT_ALL, NULL);
 
 }
 
@@ -76,5 +96,6 @@ void ui_Screen1_screen_destroy(void)
     ui_Chart1 = NULL;
     ui_Labeltemp = NULL;
     ui_Labelhum = NULL;
+    ui_Slider1 = NULL;
 
 }

@@ -17,8 +17,11 @@ extern lv_obj_t * ui_Screen1;
 extern lv_obj_t * ui_Chart1;
 extern lv_obj_t * ui_Labeltemp;
 extern lv_obj_t * ui_Labelhum;
+extern void ui_event_Slider1(lv_event_t * e);
+extern lv_obj_t * ui_Slider1;
 extern lv_chart_series_t * ui_Chart1_series_1;
 extern lv_chart_series_t * ui_Chart1_series_2;
+extern uint8_t slider_change_value;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
