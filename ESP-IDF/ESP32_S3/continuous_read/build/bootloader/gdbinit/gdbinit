@@ -1,0 +1,2 @@
+source D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/continuous_read/build/bootloader/gdbinit/symbols
+source D:/GitHub/MCUs-Code/ESP-IDF/ESP32_S3/continuous_read/build/bootloader/gdbinit/connect
