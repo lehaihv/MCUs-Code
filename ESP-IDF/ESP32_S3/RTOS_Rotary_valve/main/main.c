@@ -60,15 +60,15 @@ void valve_task(void *pvParameter)
             initial_port++; 
             if (initial_port > 10) initial_port = 1;
         } 
-        else 
+        else
         {
             ESP_LOGW(TAG, "Switch failed");
         }
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
-    /*    
+       
     pgvalve_destroy(v);
-    vTaskDelete(NULL); */
+    vTaskDelete(NULL);
 }
 
 static void configure_led(void)
@@ -132,5 +132,5 @@ void app_main(void)
     xTaskCreatePinnedToCore(&task_led, "task_led", 2048, NULL, 1, NULL, 0);
 
     // Create RTOS task for rotary valve
-    xTaskCreatePinnedToCore(&valve_task, "valve_task", 4096, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(&valve_task, "valve_task", 3072, NULL, 1, NULL, 1);
 }
